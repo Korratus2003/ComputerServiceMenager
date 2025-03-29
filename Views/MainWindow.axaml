@@ -7,13 +7,15 @@
         x:Class="ComputerServiceManager.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/logo.png"
-        Title="ComputerServiceManager">
+        Title="ComputerServiceManager"
+        MinWidth="600" 
+        MinHeight="338">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
-    <TransitioningContentControl Content="{Binding CurrentView}"/>
+    <TransitioningContentControl Content="{Binding CurrentView}" Background="#303036"/>
 
 </Window>

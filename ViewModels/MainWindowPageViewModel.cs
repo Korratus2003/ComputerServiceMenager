@@ -15,15 +15,19 @@ public partial class MainWindowPageViewModel: ViewModelBase
 
     [ObservableProperty]
     private ViewModelBase _activeViewModel = new DevicesPageViewModel();
+    
 
     public ObservableCollection<ListItemTemplate> Items { get; } = new()
     {
-        new ListItemTemplate(typeof(TechniciansPageViewModel), "people_community_regular"),
+        new ListItemTemplate(typeof(TechniciansPageViewModel), "people_settings_regular"),
         new ListItemTemplate(typeof(DevicesPageViewModel), "phone_tablet_regular"),
+        new ListItemTemplate(typeof(ClientsPageViewModel), "people_community_regular")
     };
+    
     
     [ObservableProperty]
     private ListItemTemplate _selectedListItem;
+    
 
     partial void OnSelectedListItemChanged(ListItemTemplate? value)
     {

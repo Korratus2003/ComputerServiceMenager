@@ -6,16 +6,22 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ComputerServiceManager.Views.MainWindowPageView"
              x:DataType="viewModels:MainWindowPageViewModel">
+    <UserControl.Styles>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="#40303036"></Setter>
+        </Style>
+    </UserControl.Styles>
     <SplitView IsPaneOpen="{Binding IsPaneOpen}"
                DisplayMode="CompactInline"
                CompactPaneLength="48"
-               OpenPaneLength="250">
+               OpenPaneLength="250"
+               PaneBackground="#FC5130">
         <SplitView.Pane>
            <StackPanel>
-               <Button  Command="{Binding TriggerPaneCommand}" Margin="4  4 0 0">
+               <Button  Command="{Binding TriggerPaneCommand}" Margin="4  4 0 0" Background="#FFFAFF">
                    <PathIcon VerticalAlignment="Center" Data="{StaticResource line_horizontal_3_regular}"></PathIcon>
                </Button>
-               <ListBox ItemsSource="{Binding Items}"  SelectedItem="{Binding SelectedListItem}" Margin="0 5 0 0">
+               <ListBox ItemsSource="{Binding Items}"  SelectedItem="{Binding SelectedListItem}" Margin="0 5 0 0" Background="#FC5130">
                    <ListBox.ItemTemplate >
                         <DataTemplate DataType="{x:Type viewModels:ListItemTemplate}">
                             <StackPanel  Orientation="Horizontal">
