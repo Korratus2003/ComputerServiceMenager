@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:ComputerServiceManager.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ComputerServiceManager.Views.MainWindowPageView"
+             x:DataType="viewModels:MainWindowPageViewModel">
+    <SplitView IsPaneOpen="{Binding IsPaneOpen}"
+               DisplayMode="CompactInline"
+               CompactPaneLength="48"
+               OpenPaneLength="250">
+        <SplitView.Pane>
+           <StackPanel>
+               <Button  Command="{Binding TriggerPaneCommand}" Margin="4  4 0 0">
+                   <PathIcon VerticalAlignment="Center" Data="{StaticResource line_horizontal_3_regular}"></PathIcon>
+               </Button>
+               <ListBox ItemsSource="{Binding Items}"  SelectedItem="{Binding SelectedListItem}" Margin="0 5 0 0">
+                   <ListBox.ItemTemplate >
+                        <DataTemplate DataType="{x:Type viewModels:ListItemTemplate}">
+                            <StackPanel  Orientation="Horizontal">
+                                <PathIcon Data="{Binding ListItemIcon}" VerticalAlignment="Center" HorizontalAlignment="Center"></PathIcon>
+                                <TextBlock Margin="20 0 0 0" TextAlignment="Center" FontWeight="Bold" Text="{Binding Label}"></TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+               </ListBox>
+           </StackPanel>
+        </SplitView.Pane>
+        <SplitView.Content>
+            <TransitioningContentControl Content="{Binding ActiveViewModel}" Margin="10"/>
+        </SplitView.Content>
+    </SplitView>
+</UserControl>

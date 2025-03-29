@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:ComputerServiceManager.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ComputerServiceManager.Views.LoginPageView"
+             x:DataType="viewModels:LoginPageViewModel">
+    <Border CornerRadius="20" Width="300" MaxHeight="300">
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock Margin="20" HorizontalAlignment="Center" FontWeight="Bold" FontSize="25">LOGIN</TextBlock>
+            <TextBox Grid.Row="1" Name="login" Watermark="login" Margin="10"/>
+            <TextBox Grid.Row="2" Name="password" PasswordChar="*" Watermark="password" Margin="10"/>
+            <Button Grid.Row="3" Command="{Binding LoginCommand}" HorizontalAlignment="Center" Margin="10" CornerRadius="15">
+                <TextBlock Margin="5">LOGIN</TextBlock>
+            </Button>
+        </StackPanel>
+    </Border>
+</UserControl>
