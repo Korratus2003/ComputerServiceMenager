@@ -22,9 +22,10 @@
     <Border CornerRadius="20" Width="300" MaxHeight="300" Background="#FC5130" BoxShadow="0 0 20 black">
         <StackPanel VerticalAlignment="Center">
             <TextBlock Margin="20" HorizontalAlignment="Center" FontWeight="Bold" FontSize="25">LOGIN</TextBlock>
-            <TextBox Grid.Row="1" Name="login" Watermark="login" Margin="10"/>
-            <TextBox Grid.Row="2" Name="password" PasswordChar="*" Watermark="password" Margin="10"/>
-            <Button  Grid.Row="3" Command="{Binding LoginCommand}" HorizontalAlignment="Center" Margin="10" CornerRadius="15" FontWeight="Bold">
+            <TextBox Grid.Row="1" Name="login" Watermark="login" Text="{Binding Username}" Margin="10"/>
+            <TextBox Grid.Row="2" Name="password" PasswordChar="*" Text="{Binding Password}" Watermark="password" Margin="10"/>
+            <TextBlock HorizontalAlignment="Center" Text="{Binding LoginErrorMessage}" FontWeight="Bold" />
+            <Button  Grid.Row="3" Command="{Binding LoginCommand}" HorizontalAlignment="Center" Margin="10" CornerRadius="15" FontWeight="Bold" Background="#FFFAFF">
                 <TextBlock Margin="5">LOGIN</TextBlock>
             </Button>
         </StackPanel>

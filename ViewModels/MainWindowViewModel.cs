@@ -1,7 +1,6 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ComputerServiceManager.Models;
 using ComputerServiceManager.Views;
 
 namespace ComputerServiceManager.ViewModels;
@@ -9,7 +8,7 @@ namespace ComputerServiceManager.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    public UserModel LogedUser = null;
+    public User LogedUser = null;
     
     [ObservableProperty]
     private ViewModelBase _currentView;
@@ -17,12 +16,13 @@ public partial class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel()
     {
         _currentView = new LoginPageViewModel(this);
+        
         if (LogedUser == null)
         {
-            CurrentView = new LoginPageViewModel(this);
+            CurrentView = _currentView;
         }
         else{
-            CurrentView = new MainWindowPageViewModel();
+            CurrentView = new MainWindowPageViewModel(this);
         }
     }
 }

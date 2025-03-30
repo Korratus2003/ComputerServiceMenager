@@ -10,6 +10,8 @@ namespace ComputerServiceManager.ViewModels;
 
 public partial class MainWindowPageViewModel: ViewModelBase
 {
+    private readonly MainWindowViewModel _mainWindowViewModel;
+    
     [ObservableProperty]
     private bool _isPaneOpen = false;
 
@@ -21,7 +23,11 @@ public partial class MainWindowPageViewModel: ViewModelBase
     {
         new ListItemTemplate(typeof(TechniciansPageViewModel), "people_settings_regular"),
         new ListItemTemplate(typeof(DevicesPageViewModel), "phone_tablet_regular"),
-        new ListItemTemplate(typeof(ClientsPageViewModel), "people_community_regular")
+        new ListItemTemplate(typeof(ClientsPageViewModel), "people_community_regular"),
+        new ListItemTemplate(typeof(ServicePageViewModel), "wrench_regular"),
+        new ListItemTemplate(typeof(SalesPageViewModel),"money_regular"),
+        new ListItemTemplate(typeof(WarehousePageViewModel),"vehicle_truck_regular"),
+        new ListItemTemplate(typeof(SettingsPageViewModel),"settings_regular")
     };
     
     
@@ -42,7 +48,17 @@ public partial class MainWindowPageViewModel: ViewModelBase
     {
         IsPaneOpen = !IsPaneOpen;
     }
-    
+
+    [RelayCommand]
+    private void Logout()
+    {
+        _mainWindowViewModel.LogedUser = null;
+        _mainWindowViewModel.CurrentView = new LoginPageViewModel(_mainWindowViewModel);
+    }
+    public MainWindowPageViewModel(MainWindowViewModel mainWindowViewModel)
+    {
+        _mainWindowViewModel = mainWindowViewModel;
+    }
 }
 
 public class ListItemTemplate

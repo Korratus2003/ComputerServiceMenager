@@ -14,23 +14,28 @@
     <SplitView IsPaneOpen="{Binding IsPaneOpen}"
                DisplayMode="CompactInline"
                CompactPaneLength="48"
-               OpenPaneLength="250"
+               OpenPaneLength="200"
                PaneBackground="#FC5130">
         <SplitView.Pane>
            <StackPanel>
                <Button  Command="{Binding TriggerPaneCommand}" Margin="4  4 0 0" Background="#FFFAFF">
                    <PathIcon VerticalAlignment="Center" Data="{StaticResource line_horizontal_3_regular}"></PathIcon>
                </Button>
-               <ListBox ItemsSource="{Binding Items}"  SelectedItem="{Binding SelectedListItem}" Margin="0 5 0 0" Background="#FC5130">
+               <ListBox ItemsSource="{Binding Items}"  SelectedItem="{Binding SelectedListItem}" Margin="2 5 0 0" Background="#FC5130">
                    <ListBox.ItemTemplate >
                         <DataTemplate DataType="{x:Type viewModels:ListItemTemplate}">
                             <StackPanel  Orientation="Horizontal">
                                 <PathIcon Data="{Binding ListItemIcon}" VerticalAlignment="Center" HorizontalAlignment="Center"></PathIcon>
-                                <TextBlock Margin="20 0 0 0" TextAlignment="Center" FontWeight="Bold" Text="{Binding Label}"></TextBlock>
+                                <TextBlock Margin="20 0 0 0" TextAlignment="Center" FontWeight="Bold" Text="{Binding Label}" VerticalAlignment="Center"></TextBlock>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                </ListBox>
+               <Button IsVisible="{Binding IsPaneOpen}" HorizontalAlignment="Center" Margin="0 50 0 0" Background="#FFFAFF" Command="{Binding LogoutCommand}">
+                   <TextBlock Margin="5">
+                       WYLOGUJ
+                   </TextBlock>
+               </Button>
            </StackPanel>
         </SplitView.Pane>
         <SplitView.Content>
