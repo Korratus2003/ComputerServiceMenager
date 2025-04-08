@@ -5,6 +5,6 @@ public class User
     public string Role { get; set; }
     public string Password { get; set; }
     public string Login { get; set; }
-
+    
     public Technician Technician { get; set; }
 }

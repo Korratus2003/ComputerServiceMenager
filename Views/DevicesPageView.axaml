@@ -2,7 +2,55 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ComputerServiceManager.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ComputerServiceManager.Views.DevicesPageView">
-    <TextBlock FontWeight="Bold" HorizontalAlignment="Center">URZĄDZENIA</TextBlock>
+             x:Class="ComputerServiceManager.Views.DevicesPageView"
+             x:DataType="vm:DevicesPageViewModel">
+<UserControl.Styles>
+    <Style Selector="TextBlock">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="TextBlock.High">
+        <Setter Property="FontSize" Value="20"/>
+    </Style>
+</UserControl.Styles>
+    <StackPanel>
+        <TextBlock FontWeight="Bold" HorizontalAlignment="Center" FontSize="60" Foreground="Azure" Margin="0 20 0 20">DEVICES</TextBlock>
+        <ListBox ItemsSource="{Binding Items}" MaxWidth="1500" Background="#FFF8FF">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border  CornerRadius="10">
+                        <StackPanel HorizontalAlignment="Center" Margin="20" >
+                            <StackPanel>
+                                <TextBlock>
+                                    <TextBlock Classes="High" Text="DEVICE: " />
+                                    <TextBlock Classes="High" Text="{Binding Device.Name}" HorizontalAlignment="Center"/>
+                                </TextBlock>
+                                <TextBlock>
+                                    <TextBlock Text="TYPE: "/>
+                                    <TextBlock Text="{Binding Device.Type}"/>
+                                </TextBlock>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock>
+                                    <TextBlock Text="CLIENT: "/>
+                                    <TextBlock Text="{Binding Device.Client.Name}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Device.Client.Surname}"/>
+                                </TextBlock>
+                                <TextBlock>
+                                    <TextBlock Text="CLIENT PHONE: " Margin="10 0 0 0"/>
+                                    <TextBlock Text="{Binding Device.Client.PhoneNumber}"/>
+                                </TextBlock>
+                            </StackPanel>
+                            <TextBlock>
+                                <TextBlock Text="LAST TECHNICIAN: " Margin="10 0 0 0"/>
+                                <TextBlock Text="{Binding LastServiceTechnician.Name}"></TextBlock>
+                                <TextBlock Text="{Binding LastServiceTechnician.Surname}"></TextBlock>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
 </UserControl>

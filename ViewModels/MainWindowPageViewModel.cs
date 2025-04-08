@@ -61,7 +61,7 @@ public partial class MainWindowPageViewModel: ViewModelBase
     }
 }
 
-public class ListItemTemplate
+public partial class ListItemTemplate
 {
     public ListItemTemplate(Type type, String iconKey)
     {

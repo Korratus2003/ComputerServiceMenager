@@ -36,6 +36,10 @@ public class AppDbContext : DbContext
             .HasMany(d => d.Services)
             .WithOne(s => s.Device)
             .HasForeignKey(s => s.DeviceId);
+        
+        modelBuilder.Entity<Device>()
+            .Property(d => d.Type)
+            .HasMaxLength(255);
 
         modelBuilder.Entity<Device>()
             .HasMany(d => d.Sales)
@@ -61,5 +65,9 @@ public class AppDbContext : DbContext
             .HasOne(s => s.Device)
             .WithMany(d => d.Sales)
             .HasForeignKey(s => s.DeviceId);
+        
+        modelBuilder.Entity<InventoryDevice>()
+            .Property(d => d.Type)
+            .HasMaxLength(255);
     }
 }

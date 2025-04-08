@@ -24,5 +24,7 @@ public partial class MainWindowViewModel : ViewModelBase
         else{
             CurrentView = new MainWindowPageViewModel(this);
         }
+        //comment if you want not login
+        CurrentView = new MainWindowPageViewModel(this);
     }
 }
