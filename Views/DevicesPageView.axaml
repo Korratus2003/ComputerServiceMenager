@@ -6,51 +6,73 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ComputerServiceManager.Views.DevicesPageView"
              x:DataType="vm:DevicesPageViewModel">
-<UserControl.Styles>
-    <Style Selector="TextBlock">
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-    </Style>
-    <Style Selector="TextBlock.High">
-        <Setter Property="FontSize" Value="20"/>
-    </Style>
-</UserControl.Styles>
-    <StackPanel>
-        <TextBlock FontWeight="Bold" HorizontalAlignment="Center" FontSize="60" Foreground="Azure" Margin="0 20 0 20">DEVICES</TextBlock>
-        <ListBox ItemsSource="{Binding Items}" MaxWidth="1500" Background="#FFF8FF">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border  CornerRadius="10">
-                        <StackPanel HorizontalAlignment="Center" Margin="20" >
-                            <StackPanel>
-                                <TextBlock>
-                                    <TextBlock Classes="High" Text="DEVICE: " />
-                                    <TextBlock Classes="High" Text="{Binding Device.Name}" HorizontalAlignment="Center"/>
-                                </TextBlock>
-                                <TextBlock>
-                                    <TextBlock Text="TYPE: "/>
-                                    <TextBlock Text="{Binding Device.Type}"/>
-                                </TextBlock>
-                            </StackPanel>
-                            <StackPanel>
-                                <TextBlock>
-                                    <TextBlock Text="CLIENT: "/>
-                                    <TextBlock Text="{Binding Device.Client.Name}" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding Device.Client.Surname}"/>
-                                </TextBlock>
-                                <TextBlock>
-                                    <TextBlock Text="CLIENT PHONE: " Margin="10 0 0 0"/>
-                                    <TextBlock Text="{Binding Device.Client.PhoneNumber}"/>
-                                </TextBlock>
-                            </StackPanel>
-                            <TextBlock>
-                                <TextBlock Text="LAST TECHNICIAN: " Margin="10 0 0 0"/>
-                                <TextBlock Text="{Binding LastServiceTechnician.Name}"></TextBlock>
-                                <TextBlock Text="{Binding LastServiceTechnician.Surname}"></TextBlock>
-                            </TextBlock>
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </StackPanel>
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style Selector="TextBlock.High">
+            <Setter Property="FontSize" Value="20"/>
+        </Style>
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#D3D3D3"/>
+            <Setter Property="CornerRadius" Value="10"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Grid RowDefinitions="Auto, *" Margin="20">
+                <!-- Nagłówek -->
+                <TextBlock Grid.Row="0"
+                           FontWeight="Bold"
+                           FontSize="60"
+                           Foreground="Azure"
+                           Margin="0 20 0 20"
+                           Text="DEVICES" />
+
+                <!-- Lista urządzeń -->
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Items}"
+                         MaxWidth="1500"
+                         Background="Transparent">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="10"  Padding="20" Background="#FFFAFF">
+                                <StackPanel HorizontalAlignment="Center" Margin="10">
+                                    <StackPanel>
+                                        <TextBlock>
+                                            <TextBlock Classes="High" Text="DEVICE: " />
+                                            <TextBlock Classes="High" Text="{Binding Device.Name}" HorizontalAlignment="Center"/>
+                                        </TextBlock>
+                                        <TextBlock>
+                                            <TextBlock Text="TYPE: "/>
+                                            <TextBlock Text="{Binding Device.Type}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <TextBlock>
+                                            <TextBlock Text="CLIENT: "/>
+                                            <TextBlock Text="{Binding Device.Client.Name}" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Device.Client.Surname}"/>
+                                        </TextBlock>
+                                        <TextBlock>
+                                            <TextBlock Text="CLIENT PHONE: " Margin="10 0 0 0"/>
+                                            <TextBlock Text="{Binding Device.Client.PhoneNumber}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <TextBlock>
+                                        <TextBlock Text="LAST TECHNICIAN: " Margin="10 0 0 0"/>
+                                        <TextBlock Text="{Binding LastServiceTechnician.Name}"/>
+                                        <TextBlock Text="{Binding LastServiceTechnician.Surname}"/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
 </UserControl>
