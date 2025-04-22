@@ -8,7 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace ComputerServiceManager.ViewModels;
 
-public partial class MainWindowPageViewModel: ViewModelBase
+public partial class MainPageViewModel: ViewModelBase
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
     
@@ -16,7 +16,7 @@ public partial class MainWindowPageViewModel: ViewModelBase
     private bool _isPaneOpen = false;
 
     [ObservableProperty]
-    private ViewModelBase _activeViewModel = new DevicesPageViewModel();
+    private ViewModelBase _activeViewModel = new TechniciansPageViewModel();
     
 
     public ObservableCollection<ListItemTemplate> Items { get; } = new()
@@ -26,7 +26,7 @@ public partial class MainWindowPageViewModel: ViewModelBase
         new ListItemTemplate(typeof(ClientsPageViewModel), "people_community_regular"),
         new ListItemTemplate(typeof(ServicePageViewModel), "wrench_regular"),
         new ListItemTemplate(typeof(SalesPageViewModel),"money_regular"),
-        new ListItemTemplate(typeof(WarehousePageViewModel),"vehicle_truck_regular"),
+        new ListItemTemplate(typeof(MagazinePageViewModel),"vehicle_truck_regular"),
         new ListItemTemplate(typeof(SettingsPageViewModel),"settings_regular")
     };
     
@@ -55,7 +55,7 @@ public partial class MainWindowPageViewModel: ViewModelBase
         _mainWindowViewModel.LogedUser = null;
         _mainWindowViewModel.CurrentView = new LoginPageViewModel(_mainWindowViewModel);
     }
-    public MainWindowPageViewModel(MainWindowViewModel mainWindowViewModel)
+    public MainPageViewModel(MainWindowViewModel mainWindowViewModel)
     {
         _mainWindowViewModel = mainWindowViewModel;
     }

@@ -22,9 +22,9 @@ public partial class MainWindowViewModel : ViewModelBase
             CurrentView = _currentView;
         }
         else{
-            CurrentView = new MainWindowPageViewModel(this);
+            CurrentView = new MainPageViewModel(this);
         }
         //comment if you want not login
-        CurrentView = new MainWindowPageViewModel(this);
+        CurrentView = new MainPageViewModel(this);
     }
 }

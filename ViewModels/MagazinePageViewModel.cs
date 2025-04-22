@@ -1,6 +1,6 @@
 namespace ComputerServiceManager.ViewModels;
 
-public class WarehousePageViewModel : ViewModelBase
+public class MagazinePageViewModel
 {
     
 }

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ComputerServiceManager.Services;
+using ComputerServiceManager.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace ComputerServiceManager.ViewModels
@@ -45,14 +45,14 @@ namespace ComputerServiceManager.ViewModels
                     return;
                 }
 
-                if (!findedUser.Password.Equals(Password))
+                if (!findedUser.PasswordHash.Equals(Password))
                 {
                     LoginErrorMessage = "INWALID USERNAME OR PASSWORD";
                     return;
                 }
                 
                 _mainWindowViewModel.LogedUser = findedUser;
-                _mainWindowViewModel.CurrentView = new MainWindowPageViewModel(_mainWindowViewModel);
+                _mainWindowViewModel.CurrentView = new MainPageViewModel(_mainWindowViewModel);
                 
             }
            
