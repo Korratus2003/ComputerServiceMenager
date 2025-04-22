@@ -8,16 +8,15 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace ComputerServiceManager.ViewModels;
 
-public partial class MainPageViewModel: ViewModelBase
+public partial class MainPageViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
-    
+
     [ObservableProperty]
     private bool _isPaneOpen = false;
 
     [ObservableProperty]
-    private ViewModelBase _activeViewModel = new TechniciansPageViewModel();
-    
+    private ViewModelBase _activeViewModel;
 
     public ObservableCollection<ListItemTemplate> Items { get; } = new()
     {
@@ -25,24 +24,22 @@ public partial class MainPageViewModel: ViewModelBase
         new ListItemTemplate(typeof(DevicesPageViewModel), "phone_tablet_regular"),
         new ListItemTemplate(typeof(ClientsPageViewModel), "people_community_regular"),
         new ListItemTemplate(typeof(ServicePageViewModel), "wrench_regular"),
-        new ListItemTemplate(typeof(SalesPageViewModel),"money_regular"),
-        new ListItemTemplate(typeof(MagazinePageViewModel),"vehicle_truck_regular"),
-        new ListItemTemplate(typeof(SettingsPageViewModel),"settings_regular")
+        new ListItemTemplate(typeof(SalesPageViewModel), "money_regular"),
+        new ListItemTemplate(typeof(MagazinePageViewModel), "vehicle_truck_regular"),
+        new ListItemTemplate(typeof(SettingsPageViewModel), "settings_regular")
     };
-    
-    
+
     [ObservableProperty]
     private ListItemTemplate _selectedListItem;
-    
 
     partial void OnSelectedListItemChanged(ListItemTemplate? value)
     {
         if (value is null) return;
         var instance = Activator.CreateInstance(value.ModelType);
         if (instance is null) return;
-        ActiveViewModel = (ViewModelBase)instance;
+        ViewMediator.Instance.ChangeView((ViewModelBase)instance);
     }
-    
+
     [RelayCommand]
     private void TriggerPane()
     {
@@ -54,12 +51,25 @@ public partial class MainPageViewModel: ViewModelBase
     {
         _mainWindowViewModel.LogedUser = null;
         _mainWindowViewModel.CurrentView = new LoginPageViewModel(_mainWindowViewModel);
+        ViewMediator.Instance.ChangeView(new TechniciansPageViewModel());
     }
+
     public MainPageViewModel(MainWindowViewModel mainWindowViewModel)
     {
         _mainWindowViewModel = mainWindowViewModel;
+        ViewMediator.Instance.ViewChanged += OnViewChanged;
+        ActiveViewModel = ViewMediator.Instance.ActiveViewModel;
+        ViewMediator.Instance.ChangeView(new TechniciansPageViewModel());
+    }
+
+    private void OnViewChanged(ViewModelBase newView)
+    {
+        ActiveViewModel = newView;
     }
 }
+
+
+
 
 public partial class ListItemTemplate
 {
@@ -75,3 +85,5 @@ public partial class ListItemTemplate
     public Type ModelType { get;  }
     public StreamGeometry ListItemIcon { get;  }
 }
+
+

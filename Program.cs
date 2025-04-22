@@ -13,6 +13,7 @@ sealed class Program
     {
         using (var dbContext = new AppDbContext())
         {
+            dbContext.Database.EnsureCreated();
             
             MagazineSeeder.Seed(dbContext);
             ClientSeeder.Seed(dbContext);

@@ -20,7 +20,7 @@ namespace ComputerServiceManager.Seeders
                     Name = "Piotr",
                     Surname = "Wiśniewski",
                     PhoneNumber = "500600700",
-                    EmploymentDate = new DateTime(2018, 6, 1, 0, 0, 0, DateTimeKind.Utc),
+                    EmploymentDate = new DateTimeOffset(new DateTime(2018, 6, 1, 0, 0, 0), TimeSpan.Zero), // UTC time
                     IsActive = true
                 },
                 new Technician
@@ -28,7 +28,7 @@ namespace ComputerServiceManager.Seeders
                     Name = "Katarzyna",
                     Surname = "Zielińska",
                     PhoneNumber = "600700800",
-                    EmploymentDate = new DateTime(2019, 3, 15, 0, 0, 0, DateTimeKind.Utc),
+                    EmploymentDate = new DateTimeOffset(new DateTime(2019, 3, 15, 0, 0, 0), TimeSpan.Zero), // UTC time
                     IsActive = true
                 },
                 new Technician
@@ -36,7 +36,7 @@ namespace ComputerServiceManager.Seeders
                     Name = "Jarosław",
                     Surname = "Majewski",
                     PhoneNumber = "700800900",
-                    EmploymentDate = new DateTime(2020, 1, 10, 0, 0, 0, DateTimeKind.Utc),
+                    EmploymentDate = new DateTimeOffset(new DateTime(2020, 1, 10, 0, 0, 0), TimeSpan.Zero), // UTC time
                     IsActive = false
                 }
             };

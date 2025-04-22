@@ -29,32 +29,35 @@
         <TextBlock Grid.Row="0"
                    FontWeight="Bold"
                    FontSize="60"
-                   Foreground="Azure"
+                   Foreground="#EEEEEE"
                    Margin="0 20 0 20"
-                   Text="TECHNICY" />
+                   Text="TECHNICIANS" />
     <StackPanel Grid.Row="1">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
-            <TextBlock VerticalAlignment="Center" Text="DODAJ TECHNIKA" Classes="High" Foreground="Azure" />
-            <Button Background="Azure" VerticalAlignment="Center" FontWeight="Bold" Command="{Binding AddTechnicianCommand}">+</Button>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+            <TextBlock VerticalAlignment="Center" Text="ADD TECHNICIANS" Classes="High" Foreground="#EEEEEE" />
+            <Button Background="#EEEEEE" VerticalAlignment="Center" FontWeight="Bold" Command="{Binding AddTechnicianCommand}">+</Button>
         </StackPanel>
     </StackPanel>
         <ListBox Grid.Row="2"
                  ItemsSource="{Binding Technicians}"
                  MaxWidth="1500"
                  Background="Transparent"
-                 Margin="0,10,0,0">
+                 Margin="0,10,0,0"
+                 SelectedItem="{Binding SelectedTechnician, Mode=TwoWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border CornerRadius="10" Margin="10" Background="#EEEEEE">
+                    <Border CornerRadius="10" Margin="10" Background="#EEEEEE" Cursor="Hand">
                         <StackPanel HorizontalAlignment="Center" Margin="40" Spacing="5">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBlock Classes="High" Text="{Binding Name}" />
                                 <TextBlock Classes="High" Text="{Binding Surname}" Margin="4 0 0 0"/>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock Text="TELEFON: "/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 10">
+                                <TextBlock Text="PHONE NUMBER: "/>
                                 <TextBlock Text="{Binding PhoneNumber}" />
                             </StackPanel>
+                            <TextBlock Padding="10" Text="FAIRED" Background="red" IsVisible="{Binding !IsActive}"/>
+                            <TextBlock Padding="10" Text="EMPLOYED" Background="Green" IsVisible="{Binding IsActive}"/>
                         </StackPanel>
                     </Border>
                 </DataTemplate>

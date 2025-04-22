@@ -32,8 +32,6 @@ namespace ComputerServiceManager.ViewModels
         {
             using (var context = new AppDbContext())
             {
-                context.Database.EnsureCreated();
-                
                 string login = Username; 
                 var findedUser = context.Users
                     .Include(u => u.Technician)

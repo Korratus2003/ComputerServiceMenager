@@ -12,6 +12,7 @@
         </Style>
         <Style Selector="TextBox:focus /template/ Border">
             <Setter Property="BorderBrush" Value="Red"/>
+            <Setter Property="CornerRadius" Value="10"/>
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
         <Style Selector="Button:pressed /template/ ContentPresenter">

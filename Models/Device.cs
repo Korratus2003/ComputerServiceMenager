@@ -1,5 +1,3 @@
-// Tabela urządzeń przypisanych do klienta/serwisu
-
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,8 +6,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 public class Device
 {
     public int Id { get; set; }
-
-    // Klucz obcy do Magazine
     public int MagazineId { get; set; }
 
     [Required, MaxLength(255)]

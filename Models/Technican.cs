@@ -1,5 +1,3 @@
-// Tabela techników
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,7 +17,7 @@ public class Technician
     [MaxLength(20)]
     public string PhoneNumber { get; set; }
 
-    public DateTime? EmploymentDate { get; set; }
+    public DateTimeOffset? EmploymentDate { get; set; }
 
     public bool IsActive { get; set; }
     
