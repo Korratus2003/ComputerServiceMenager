@@ -24,7 +24,7 @@ namespace ComputerServiceManager.Seeders
                 {
                     TechnicianId = technician.Id,
                     Login = $"user{technician.Id}",
-                    PasswordHash = "hashedPassword123",
+                    PasswordHash = "1234",
                     Range = UserRange.Technician
                 });
             }
