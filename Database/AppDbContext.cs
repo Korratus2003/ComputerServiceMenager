@@ -98,24 +98,24 @@ public class AppDbContext : DbContext
             // Konfiguracja tabeli Users
             modelBuilder.Entity<User>(entity =>
             {
-                entity.Property(e => e.Login)
-                      .HasMaxLength(50)
-                      .IsRequired();
+                  entity.Property(e => e.Login)
+                        .HasMaxLength(50)
+                        .IsRequired();
 
-                entity.Property(e => e.PasswordHash)
-                      .HasMaxLength(255)
-                      .IsRequired();
+                  entity.Property(e => e.PasswordHash)
+                        .HasMaxLength(255)
+                        .IsRequired();
 
-                entity.Property(e => e.Range)
-                      .IsRequired();
+                  entity.Property(e => e.Range)
+                        .IsRequired();
 
-                entity.HasIndex(e => e.Login)
-                      .IsUnique();
-
-                entity.HasOne(u => u.Technician)
-                      .WithOne(t => t.User)
-                      .HasForeignKey<User>(u => u.TechnicianId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                  entity.HasIndex(e => e.Login)
+                        .IsUnique();
+                  
+                  entity.HasOne(u => u.Technician)
+                        .WithMany()  
+                        .HasForeignKey(u => u.TechnicianId)
+                        .OnDelete(DeleteBehavior.Restrict);
             });
 
             // Konfiguracja tabeli Services

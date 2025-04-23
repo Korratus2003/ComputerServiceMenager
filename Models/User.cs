@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 public class User
 {
     public int Id { get; set; }
-    public int TechnicianId { get; set; }
+    public int? TechnicianId { get; set; }
 
     [Required, MaxLength(50)]
     public string Login { get; set; }

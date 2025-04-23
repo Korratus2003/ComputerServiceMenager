@@ -59,7 +59,8 @@ public partial class MainPageViewModel : ViewModelBase
         _mainWindowViewModel = mainWindowViewModel;
         ViewMediator.Instance.ViewChanged += OnViewChanged;
         ActiveViewModel = ViewMediator.Instance.ActiveViewModel;
-        ViewMediator.Instance.ChangeView(new TechniciansPageViewModel());
+        SelectedListItem = Items[0];
+        
     }
 
     private void OnViewChanged(ViewModelBase newView)

@@ -96,5 +96,11 @@ namespace ComputerServiceManager.ViewModels
             return true;
         }
 
+        [RelayCommand]
+        private void Cancel()
+        {
+            ViewMediator.Instance.ChangeView(new TechniciansPageViewModel());
+        }
+
     }
 }

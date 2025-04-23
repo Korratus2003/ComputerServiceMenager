@@ -43,7 +43,6 @@ public partial class TechniciansPageViewModel : ViewModelBase
     private void AddTechnician()
     {
         ViewMediator.Instance.ChangeView(new AddTechnicianPageViewModel());
-        System.Console.WriteLine("Adding Technician");
     }
 
     [RelayCommand]

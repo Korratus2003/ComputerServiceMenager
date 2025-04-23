@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:viewModels="clr-namespace:ComputerServiceManager.ViewModels"
+             x:Class="ComputerServiceManager.Views.CreateAdminAccountPageView"
+             x:DataType="viewModels:CreateAdminAccountPageViewModel">
+    <UserControl.Styles>
+        <Style Selector="TextBox">
+            <Setter Property="CornerRadius" Value="10"></Setter>
+        </Style>
+        <Style Selector="TextBox:focus /template/ Border">
+            <Setter Property="BorderBrush" Value="Red"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style Selector="Button:pressed /template/ ContentPresenter">
+            <Setter Property="BoxShadow" Value="0 0 1 white"></Setter>
+        </Style>
+    </UserControl.Styles>
+    
+    <StackPanel VerticalAlignment="Center">
+        <StackPanel IsVisible="{Binding ShowImportantInfo}" Spacing="20">
+            <TextBlock FontWeight="Bold" FontSize="30" TextAlignment="Center" HorizontalAlignment="Center" Margin="5" Foreground="WhiteSmoke">
+                You have created an administrator account. 
+                <LineBreak/> If you are also a technician, add yourself in the Technicians tab,
+                <LineBreak/> then assign it to yourself in the settings. 
+                <LineBreak/> As an administrator, you can add technicians, 
+                <LineBreak/> change their employment status, and add or remove accounts.
+            </TextBlock>
+            <Button HorizontalAlignment="Center" Command="{Binding AgreeCommand}" CornerRadius="15" FontWeight="Bold" Background="#FFFAFF" Cursor="Hand"><TextBlock Margin="10">OK</TextBlock></Button>
+        </StackPanel>
+        <StackPanel>
+            <Border CornerRadius="20" Width="420" MaxHeight="420" Padding="20" Background="#FC5130" BoxShadow="0 0 20 black" IsVisible="{Binding !ShowImportantInfo}">
+                <StackPanel VerticalAlignment="Center" >
+                    <TextBlock Margin="20" HorizontalAlignment="Center" FontWeight="Bold" FontSize="25">CREATE ADMIN ACCOUNT</TextBlock>
+                    <TextBlock Margin="0 0 0 10" FontWeight="Bold" TextAlignment="Center">The administrator account will be the primary account
+                        <LineBreak/> and will have the highest level of permissions</TextBlock>
+                    <TextBox Grid.Row="1" Name="login" Watermark="login" Text="{Binding Username}" Margin="10"/>
+                    <TextBox Grid.Row="2" Name="password" PasswordChar="*" Text="{Binding Password}" Watermark="password" Margin="10"/>
+                    <TextBox Grid.Row="2" Name="rePassword" PasswordChar="*" Text="{Binding RePassword}" Watermark="retype password" Margin="10"/>
+                    <TextBlock HorizontalAlignment="Center" Text="{Binding ErrorMessage}" FontWeight="Bold" />
+                    <Button  Grid.Row="3" Command="{Binding CreateAdminAccountCommand}" HorizontalAlignment="Center" Margin="10" CornerRadius="15" FontWeight="Bold" Background="#FFFAFF" Cursor="Hand">
+                        <TextBlock Margin="5">CREATE ADMIN ACCOUNT</TextBlock>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </StackPanel>
+    
+    
+
+</UserControl>

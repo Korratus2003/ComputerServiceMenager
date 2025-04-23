@@ -18,19 +18,19 @@ namespace ComputerServiceManager.Seeders
 
             var users = new List<User>();
 
-            foreach (var technician in technicians)
-            {
-                users.Add(new User
-                {
-                    TechnicianId = technician.Id,
-                    Login = $"user{technician.Id}",
-                    PasswordHash = "1234",
-                    Range = UserRange.Technician
-                });
-            }
+            // foreach (var technician in technicians)
+            // {
+            //     users.Add(new User
+            //     {
+            //         TechnicianId = technician.Id,
+            //         Login = $"user{technician.Id}",
+            //         PasswordHash = "1234",
+            //         Range = UserRange.Technician
+            //     });
+            // }
 
-            context.Users.AddRange(users);
-            context.SaveChanges();
+            // context.Users.AddRange(users);
+            // context.SaveChanges();
         }
     }
 }

@@ -87,4 +87,11 @@ public partial class EditTechnicianPageViewModel : ViewModelBase
             return true;
         }
 
+        
+        [RelayCommand]
+        private void Cancel()
+        {
+            ViewMediator.Instance.ChangeView(new TechniciansPageViewModel());
+        }
+        
 }
