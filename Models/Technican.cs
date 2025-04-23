@@ -23,5 +23,5 @@ public class Technician
     
     public ICollection<Service> Services { get; set; }
     
-    public User User { get; set; }
+    public ICollection<User>? User { get; set; }
 }

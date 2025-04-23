@@ -113,7 +113,7 @@ public class AppDbContext : DbContext
                         .IsUnique();
                   
                   entity.HasOne(u => u.Technician)
-                        .WithMany()  
+                        .WithMany(t => t.User) // Zmieniono relację: technik może mieć wielu użytkowników
                         .HasForeignKey(u => u.TechnicianId)
                         .OnDelete(DeleteBehavior.Restrict);
             });
