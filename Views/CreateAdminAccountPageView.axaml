@@ -18,6 +18,14 @@
         <Style Selector="Button:pressed /template/ ContentPresenter">
             <Setter Property="BoxShadow" Value="0 0 1 white"></Setter>
         </Style>
+        <Style Selector="Button.ok:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FC5130" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style Selector="Button.create:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#AAAAAA" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
     </UserControl.Styles>
     
     <StackPanel VerticalAlignment="Center">
@@ -29,7 +37,7 @@
                 <LineBreak/> As an administrator, you can add technicians, 
                 <LineBreak/> change their employment status, and add or remove accounts.
             </TextBlock>
-            <Button HorizontalAlignment="Center" Command="{Binding AgreeCommand}" CornerRadius="15" FontWeight="Bold" Background="#FFFAFF" Cursor="Hand"><TextBlock Margin="10">OK</TextBlock></Button>
+            <Button Classes="ok" HorizontalAlignment="Center" Command="{Binding AgreeCommand}" CornerRadius="15" FontWeight="Bold" Background="#FFFAFF" Cursor="Hand"><TextBlock Margin="10">OK</TextBlock></Button>
         </StackPanel>
         <StackPanel>
             <Border CornerRadius="20" Width="420" MaxHeight="420" Padding="20" Background="#FC5130" BoxShadow="0 0 20 black" IsVisible="{Binding !ShowImportantInfo}">
@@ -41,7 +49,7 @@
                     <TextBox Grid.Row="2" Name="password" PasswordChar="*" Text="{Binding Password}" Watermark="password" Margin="10"/>
                     <TextBox Grid.Row="2" Name="rePassword" PasswordChar="*" Text="{Binding RePassword}" Watermark="retype password" Margin="10"/>
                     <TextBlock HorizontalAlignment="Center" Text="{Binding ErrorMessage}" FontWeight="Bold" />
-                    <Button  Grid.Row="3" Command="{Binding CreateAdminAccountCommand}" HorizontalAlignment="Center" Margin="10" CornerRadius="15" FontWeight="Bold" Background="#FFFAFF" Cursor="Hand">
+                    <Button Classes="create" Grid.Row="3" Command="{Binding CreateAdminAccountCommand}" HorizontalAlignment="Center" Margin="10" CornerRadius="15" FontWeight="Bold" Background="#FFFAFF" Cursor="Hand">
                         <TextBlock Margin="5">CREATE ADMIN ACCOUNT</TextBlock>
                     </Button>
                 </StackPanel>

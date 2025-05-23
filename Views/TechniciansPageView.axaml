@@ -23,6 +23,9 @@
         <Setter Property="Background" Value="#FC5130" />
         <Setter Property="Cursor" Value="Hand" />
     </Style>
+    <Style Selector="Border.shadow:pointerover">
+        <Setter Property="BoxShadow" Value="0 0 10 white" />
+    </Style>
 </UserControl.Styles>
 
 <Grid Margin="20"
@@ -50,12 +53,12 @@
                  SelectedItem="{Binding SelectedTechnician}">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal" Margin="10" />
+                    <WrapPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border Height="300" CornerRadius="10" Background="#EEEEEE" Cursor="Hand">
+                    <Border Classes="shadow" Height="300" CornerRadius="10" Background="#EEEEEE" Cursor="Hand">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="5" Margin="10">
                             <Border CornerRadius="100" Background="#AAAAAA" Height="150" Width="150" ClipToBounds="True">
                                 <Image Source="{Binding Image }" Height="150"/>
@@ -68,8 +71,16 @@
                                 <TextBlock Text="PHONE NUMBER: " />
                                 <TextBlock Text="{Binding PhoneNumber}" />
                             </StackPanel>
-                            <TextBlock Padding="6" Text="FIRED" Background="Red" IsVisible="{Binding !IsActive}" />
-                            <TextBlock Padding="6" Text="EMPLOYED" Background="Green" IsVisible="{Binding IsActive}" />
+                            <Border CornerRadius="6" ClipToBounds="True" Background="Black">
+                                <StackPanel>
+                                    <StackPanel IsVisible="{Binding !IsActive}" Background="#AAFF0000">
+                                        <TextBlock Padding="6" Text="FIRED" />
+                                    </StackPanel>
+                                    <StackPanel IsVisible="{Binding IsActive}" Background="#AA008000">
+                                        <TextBlock Padding="6" Text="EMPLOYED"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
                     </Border>
                 </DataTemplate>

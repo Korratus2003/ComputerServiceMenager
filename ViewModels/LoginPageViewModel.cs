@@ -30,30 +30,27 @@ namespace ComputerServiceManager.ViewModels
         [RelayCommand]
         private async Task Login()
         {
-            using (var context = new AppDbContext())
+            using var context = new AppDbContext();
+
+            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
             {
-                string login = Username; 
-                var findedUser = context.Users
-                    .Include(u => u.Technician)
-                    .FirstOrDefault(u => u.Login == login);
-
-                if (findedUser == null)
-                {
-                    LoginErrorMessage = "INWALID USERNAME OR PASSWORD";
-                    return;
-                }
-
-                if (!findedUser.PasswordHash.Equals(Password))
-                {
-                    LoginErrorMessage = "INWALID USERNAME OR PASSWORD";
-                    return;
-                }
-                
-                _mainWindowViewModel.LogedUser = findedUser;
-                _mainWindowViewModel.CurrentView = new MainPageViewModel(_mainWindowViewModel);
-                
+                LoginErrorMessage = "Username and password cannot be empty.";
+                return;
             }
-           
+
+            var foundUser = await context.Users
+                .Include(u => u.Technician)
+                .FirstOrDefaultAsync(u => u.Login == Username);
+
+            if (foundUser == null || !BCrypt.Net.BCrypt.Verify(Password, foundUser.PasswordHash))
+            {
+                LoginErrorMessage = "Invalid username or password.";
+                return;
+            }
+
+            _mainWindowViewModel.LogedUser = foundUser;
+            _mainWindowViewModel.CurrentView = new MainPageViewModel(_mainWindowViewModel);
         }
+
     }
 }

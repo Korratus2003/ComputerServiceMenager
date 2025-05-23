@@ -16,11 +16,16 @@
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
         <Style Selector="Button:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#AAAAAA" />
             <Setter Property="BoxShadow" Value="0 0 1 white"></Setter>
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#AAAAAA" />
+            <Setter Property="Cursor" Value="Hand" />
         </Style>
     </UserControl.Styles>
     
-    <Border CornerRadius="20" Width="300" MaxHeight="300" Background="#FC5130" BoxShadow="0 0 20 black">
+    <Border CornerRadius="20" Width="320" MaxHeight="300" Background="#FC5130" BoxShadow="0 0 20 black">
         <StackPanel VerticalAlignment="Center">
             <TextBlock Margin="20" HorizontalAlignment="Center" FontWeight="Bold" FontSize="25">LOGIN</TextBlock>
             <TextBox Grid.Row="1" Name="login" Watermark="login" Text="{Binding Username}" Margin="10"/>

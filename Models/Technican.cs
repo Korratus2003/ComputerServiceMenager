@@ -30,8 +30,8 @@ public class Technician
     public ICollection<Service> Services { get; set; }
     
     public ICollection<User>? User { get; set; }
-
-    // Automatyczne rzutowanie ImageUrl na Bitmap
+    
+    [NotMapped]
     public Bitmap? Image
     {
         get

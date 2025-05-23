@@ -56,7 +56,9 @@ namespace ComputerServiceManager.ViewModels
 
         private void LoadTechnicians()
         {
-            _allTechnicians = _context.Technicians
+            using var context = new AppDbContext();
+    
+            _allTechnicians = context.Technicians
                 .OrderBy(t => t.EmploymentDate)
                 .ThenBy(t => t.Name)
                 .ThenBy(t => t.Surname)

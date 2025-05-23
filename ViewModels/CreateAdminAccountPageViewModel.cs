@@ -39,19 +39,21 @@ public partial class CreateAdminAccountPageViewModel : ViewModelBase
             return;
 
         using var context = new AppDbContext();
-        
+
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(Password);
+
         var newUser = new User
         {
             Login = Username,
-            PasswordHash = Password,
+            PasswordHash = hashedPassword,
             Range = UserRange.Admin
         };
 
         context.Users.Add(newUser);
         await context.SaveChangesAsync();
         ShowImportantInfo = true;
-           
     }
+
 
 
     private async Task<bool> Validate()
