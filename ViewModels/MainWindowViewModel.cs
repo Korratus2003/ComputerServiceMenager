@@ -37,6 +37,6 @@ public partial class MainWindowViewModel : ViewModelBase
             CurrentView = new MainPageViewModel(this);
         }
         //uncomment if you want not login
-        //CurrentView = new MainPageViewModel(this);
+        CurrentView = new MainPageViewModel(this);
     }
 }

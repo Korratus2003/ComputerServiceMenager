@@ -19,7 +19,7 @@ sealed class Program
             ClientSeeder.Seed(dbContext);
             TechnicianSeeder.Seed(dbContext);
             DeviceSeeder.Seed(dbContext);
-            UserSeeder.Seed(dbContext);
+            //UserSeeder.Seed(dbContext);
             ServiceSeeder.Seed(dbContext);
         }
 

@@ -7,61 +7,74 @@
              x:Class="ComputerServiceManager.Views.TechniciansPageView"
              x:DataType="vm:TechniciansPageViewModel">
 
-    <UserControl.Styles>
-        <Style Selector="TextBlock">
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="TextBlock.High">
-            <Setter Property="FontSize" Value="20"/>
-        </Style>
-        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#AEAEAE" />
-            <Setter Property="CornerRadius" Value="10" />
-            <Setter Property="Cursor" Value="Hand" />
-        </Style>
-        <Style Selector="Button:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#FC5130" />
-            <Setter Property="Cursor" Value="Hand" />
-        </Style>
-    </UserControl.Styles>
+<UserControl.Styles>
+    <Style Selector="TextBlock">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="TextBlock.High">
+        <Setter Property="FontSize" Value="20"/>
+    </Style>
+    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#FC5130" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+</UserControl.Styles>
 
-    <Grid Margin="20" RowDefinitions="Auto, Auto, *">
-        <TextBlock Grid.Row="0"
-                   FontWeight="Bold"
-                   FontSize="60"
-                   Foreground="#EEEEEE"
-                   Margin="0 20 0 20"
-                   Text="TECHNICIANS" />
-    <StackPanel Grid.Row="1" Margin="20">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
-            <TextBlock VerticalAlignment="Center" Text="ADD TECHNICIANS" Classes="High" Foreground="#EEEEEE" />
-            <Button Background="#EEEEEE" VerticalAlignment="Center" FontWeight="Bold" Command="{Binding AddTechnicianCommand}">+</Button>
-        </StackPanel>
+<Grid Margin="20"
+      RowDefinitions="Auto, *">
+    <!-- Fixed Header: Search, Filters and Add button -->
+    <StackPanel Orientation="Horizontal" Spacing="10" Grid.Row="0" HorizontalAlignment="Center" Margin="10">
+        <CheckBox Content="Show Active" Foreground="#EEEEEE"
+                  IsChecked="{Binding ShowActive, Mode=TwoWay}"/>
+        <CheckBox Content="Show Inactive" Foreground="#EEEEEE"
+                  IsChecked="{Binding ShowInactive, Mode=TwoWay}"/>
+        <TextBox Width="400"
+                 Watermark="Search by name, surname or phone..."
+                 VerticalAlignment="Center"
+                 Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Content="Clear" Command="{Binding ClearFiltersCommand}" Background="#EEEEEE" Padding="10"/>
+        
+        <Button Content="Add Technician" Background="#EEEEEE" Padding="10"
+                Command="{Binding AddTechnicianCommand}"/>
     </StackPanel>
-    <ListBox Grid.Row="2"
-             ItemsSource="{Binding Technicians}"
-             MaxWidth="1500"
-             Background="Transparent"
-             Margin="0,10,0,0"
-             SelectedItem="{Binding SelectedTechnician, Mode=TwoWay}">
-    <ListBox.ItemTemplate>
-            <DataTemplate>
-                <Border CornerRadius="10" Margin="10" Background="#EEEEEE" Cursor="Hand">
-                    <StackPanel HorizontalAlignment="Center" Margin="40" Spacing="5">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock Classes="High" Text="{Binding Name}" />
-                            <TextBlock Classes="High" Text="{Binding Surname}" Margin="4 0 0 0"/>
+
+    <!-- Scrollable Technicians list -->
+    <ScrollViewer Grid.Row="1">
+        <ListBox ItemsSource="{Binding Technicians}"
+                 Background="Transparent"
+                 SelectedItem="{Binding SelectedTechnician}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" Margin="10" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Height="300" CornerRadius="10" Background="#EEEEEE" Cursor="Hand">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="5" Margin="10">
+                            <Border CornerRadius="100" Background="#AAAAAA" Height="150" Width="150" ClipToBounds="True">
+                                <Image Source="{Binding Image }" Height="150"/>
+                            </Border>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Classes="High" Text="{Binding Name}" />
+                                <TextBlock Classes="High" Text="{Binding Surname}" Margin="4,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="PHONE NUMBER: " />
+                                <TextBlock Text="{Binding PhoneNumber}" />
+                            </StackPanel>
+                            <TextBlock Padding="6" Text="FIRED" Background="Red" IsVisible="{Binding !IsActive}" />
+                            <TextBlock Padding="6" Text="EMPLOYED" Background="Green" IsVisible="{Binding IsActive}" />
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 10">
-                            <TextBlock Text="PHONE NUMBER: "/>
-                            <TextBlock Text="{Binding PhoneNumber}" />
-                        </StackPanel>
-                        <TextBlock Padding="10" Text="FIRED" Background="red" IsVisible="{Binding !IsActive}"/>
-                        <TextBlock Padding="10" Text="EMPLOYED" Background="Green" IsVisible="{Binding IsActive}"/>
-                    </StackPanel>
-                </Border>
-            </DataTemplate>
-        </ListBox.ItemTemplate>
-    </ListBox>
-    </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </ScrollViewer>
+</Grid>
 </UserControl>

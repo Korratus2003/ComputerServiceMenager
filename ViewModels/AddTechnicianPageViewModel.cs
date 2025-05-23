@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ComputerServiceManager.Database;
 using ComputerServiceManager.Utils;
@@ -39,6 +40,8 @@ namespace ComputerServiceManager.ViewModels
                 Technician.Name = Texts.Capitalize(Technician.Name);
                 Technician.Surname = Texts.Capitalize(Technician.Surname);
                 Technician.EmploymentDate = Technician.EmploymentDate.Value.ToUniversalTime();
+                Technician.PhoneNumber = Technician.PhoneNumber.Replace(" ","");
+                Technician.PhoneNumber = Technician.PhoneNumber.Replace("-","");
                 
                 try
                 {
@@ -75,15 +78,17 @@ namespace ComputerServiceManager.ViewModels
             }
 
             
-            var phonePattern = @"^\+?[0-9\s\-]{7,15}$";
-            if (string.IsNullOrWhiteSpace(Technician.PhoneNumber))
+            var digitsOnly = new string(Technician.PhoneNumber.Where(char.IsDigit).ToArray());
+            if (digitsOnly.Length != 9)
             {
-                Error = "Phone number is required";
+                Error = "Phone number must contain exactly 9 digits.";
                 return false;
             }
-            else if (!Regex.IsMatch(Technician.PhoneNumber, phonePattern))
+
+            var phonePattern = @"^\+?[0-9\s\-]*$";
+            if (!Regex.IsMatch(Technician.PhoneNumber, phonePattern))
             {
-                Error = "Phone number is invalid";
+                Error = "Phone number contains invalid characters.";
                 return false;
             }
 

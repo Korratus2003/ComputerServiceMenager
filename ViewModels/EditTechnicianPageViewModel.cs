@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -17,9 +18,9 @@ public partial class EditTechnicianPageViewModel : ViewModelBase
     [ObservableProperty] 
     private string _error = "";
     
-    public EditTechnicianPageViewModel(Technician technician)
+    public EditTechnicianPageViewModel(int technicianId)
     {
-        Technician = technician;
+        Technician =_dbContext.Technicians.Find(technicianId);
     }
 
     [RelayCommand]
@@ -30,6 +31,7 @@ public partial class EditTechnicianPageViewModel : ViewModelBase
                 Technician.Name = Texts.Capitalize(Technician.Name);
                 Technician.Surname = Texts.Capitalize(Technician.Surname);
                 Technician.EmploymentDate = Technician.EmploymentDate.Value.ToUniversalTime();
+                
                 
                 try
                 {
@@ -50,42 +52,44 @@ public partial class EditTechnicianPageViewModel : ViewModelBase
 
 
 
-        public bool IsValidate()
+    public bool IsValidate()
+    {
+
+        if (string.IsNullOrWhiteSpace(Technician.Name) || Technician.Name.Length < 2)
         {
+            Error = "Name is required";
+            return false;
+        }
 
-            if (string.IsNullOrWhiteSpace(Technician.Name) || Technician.Name.Length < 2)
-            {
-                Error = "Name is required";
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(Technician.Surname) || Technician.Surname.Length < 2)
-            {
-                Error = "Surname is required";
-                return false;
-            }
+        if (string.IsNullOrWhiteSpace(Technician.Surname) || Technician.Surname.Length < 2)
+        {
+            Error = "Surname is required";
+            return false;
+        }
 
             
-            var phonePattern = @"^\+?[0-9\s\-]{7,15}$";
-            if (string.IsNullOrWhiteSpace(Technician.PhoneNumber))
-            {
-                Error = "Phone number is required";
-                return false;
-            }
-            else if (!Regex.IsMatch(Technician.PhoneNumber, phonePattern))
-            {
-                Error = "Phone number is invalid";
-                return false;
-            }
-
-            if (Technician.EmploymentDate == null)
-            {
-                Error = "Employment date is required";
-                return false;
-            }
-
-            return true;
+        var digitsOnly = new string(Technician.PhoneNumber.Where(char.IsDigit).ToArray());
+        if (digitsOnly.Length != 9)
+        {
+            Error = "Phone number must contain exactly 9 digits.";
+            return false;
         }
+
+        var phonePattern = @"^\+?[0-9\s\-]*$";
+        if (!Regex.IsMatch(Technician.PhoneNumber, phonePattern))
+        {
+            Error = "Phone number contains invalid characters.";
+            return false;
+        }
+
+        if (Technician.EmploymentDate == null)
+        {
+            Error = "Employment date is required";
+            return false;
+        }
+
+        return true;
+    }
 
         
         [RelayCommand]

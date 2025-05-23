@@ -176,6 +176,10 @@ namespace ComputerServiceManager.Migrations
                     b.Property<DateTimeOffset?>("EmploymentDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(2083)
+                        .HasColumnType("character varying(2083)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
@@ -220,7 +224,7 @@ namespace ComputerServiceManager.Migrations
                     b.Property<int>("Range")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TechnicianId")
+                    b.Property<int?>("TechnicianId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -228,8 +232,7 @@ namespace ComputerServiceManager.Migrations
                     b.HasIndex("Login")
                         .IsUnique();
 
-                    b.HasIndex("TechnicianId")
-                        .IsUnique();
+                    b.HasIndex("TechnicianId");
 
                     b.ToTable("Users");
                 });
@@ -275,10 +278,9 @@ namespace ComputerServiceManager.Migrations
             modelBuilder.Entity("User", b =>
                 {
                     b.HasOne("Technician", "Technician")
-                        .WithOne("User")
-                        .HasForeignKey("User", "TechnicianId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("User")
+                        .HasForeignKey("TechnicianId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Technician");
                 });
@@ -302,8 +304,7 @@ namespace ComputerServiceManager.Migrations
                 {
                     b.Navigation("Services");
 
-                    b.Navigation("User")
-                        .IsRequired();
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

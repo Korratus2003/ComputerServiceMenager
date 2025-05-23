@@ -10,6 +10,13 @@
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
             <Setter Property="Background" Value="#40303036"></Setter>
         </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#AAAAAA" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="#B32910" />
+        </Style>
     </UserControl.Styles>
     <SplitView IsPaneOpen="{Binding IsPaneOpen}"
                DisplayMode="CompactInline"
