@@ -16,8 +16,8 @@ namespace ComputerServiceManager.ViewModels
 {
     public partial class SettingsPageViewModel : ViewModelBase
     {
-        private const string EnvFilePath = ".env"; // Path to the settings file
-        private AppDbContext _dbContext;
+        private const string EnvFilePath = ".env";
+
         [ObservableProperty] private string _dbHost;
         [ObservableProperty] private string _dbPort;
         [ObservableProperty] private string _dbUsername;
@@ -79,7 +79,7 @@ namespace ComputerServiceManager.ViewModels
 
                     File.WriteAllLines(EnvFilePath, lines);
                     ErrorMessage = "";
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -87,7 +87,7 @@ namespace ComputerServiceManager.ViewModels
                 }
             }
         }
-        
+
         private async Task<bool> TestConnection()
         {
             if (string.IsNullOrWhiteSpace(DbHost) ||
@@ -104,7 +104,7 @@ namespace ComputerServiceManager.ViewModels
                 ErrorMessage = "Invalid port number.";
                 return false;
             }
-            
+
             var connectionString =
                 $"Host={DbHost};Port={DbPort};Username={DbUsername};Password={DbPassword};";
 
@@ -122,11 +122,16 @@ namespace ComputerServiceManager.ViewModels
 
             return true;
         }
+
         [RelayCommand]
         private async Task ExportDatabase()
         {
             await SaveSettings();
-            var filePath = await OpenSaveDialog(GetMainWindow());
+            var filePath = await FileDialog.OpenSaveDialog(new List<(string, List<string>)>
+            {
+                ("Backup Files", new List<string> { "backup" })
+            }, $"{DbName}.backup");
+            
             if (string.IsNullOrEmpty(filePath))
                 return;
 
@@ -157,114 +162,76 @@ namespace ComputerServiceManager.ViewModels
         }
 
 
-        
-       [RelayCommand]
-private async Task ImportDatabase()
-{
-    await SaveSettings();
-    
-    var createDbPsi = new ProcessStartInfo
-    {
-        FileName = "createdb",
-        Arguments = $"-h {DbHost} -p {DbPort} -U {DbUsername} {DbName}",
-        RedirectStandardOutput = true,
-        RedirectStandardError = true,
-        UseShellExecute = false,
-        CreateNoWindow = true
-    };
-    createDbPsi.Environment["PGPASSWORD"] = DbPassword;
 
-    try
-    {
-        using var createProcess = Process.Start(createDbPsi);
-        string createOutput = await createProcess.StandardOutput.ReadToEndAsync();
-        string createError = await createProcess.StandardError.ReadToEndAsync();
-        await createProcess.WaitForExitAsync();
-
-        if (createProcess.ExitCode != 0)
+        [RelayCommand]
+        private async Task ImportDatabase()
         {
-            ErrorMessage = $"Nie udało się utworzyć bazy danych:\n{createError}";
-            return;
-        }
-    }
-    catch (Exception ex)
-    {
-        ErrorMessage = $"Błąd tworzenia bazy danych: {ex.Message}";
-        return;
-    }
+            await SaveSettings();
 
-    var filePath = await OpenFileDialog(GetMainWindow());
-    if (string.IsNullOrEmpty(filePath))
-        return;
-
-    var restorePsi = new ProcessStartInfo
-    {
-        FileName = "pg_restore",
-        Arguments = $"-h {DbHost} -p {DbPort} -U {DbUsername} -d {DbName} -v \"{filePath}\"",
-        RedirectStandardOutput = true,
-        RedirectStandardError = true,
-        UseShellExecute = false,
-        CreateNoWindow = true
-    };
-    restorePsi.Environment["PGPASSWORD"] = DbPassword;
-
-    try
-    {
-        using var restoreProcess = Process.Start(restorePsi);
-        string restoreOutput = await restoreProcess.StandardOutput.ReadToEndAsync();
-        string restoreError = await restoreProcess.StandardError.ReadToEndAsync();
-        await restoreProcess.WaitForExitAsync();
-
-        ErrorMessage = restoreProcess.ExitCode == 0
-            ? "Import zakończony pomyślnie!"
-            : $"Import nie powiódł się:\n{restoreError}";
-    }
-    catch (Exception ex)
-    {
-        ErrorMessage = $"Błąd importu: {ex.Message}";
-    }
-}
-
-
-
-        
-        public async Task<string?> OpenFileDialog(Window parent)
-        {
-            var dialog = new OpenFileDialog
+            var createDbPsi = new ProcessStartInfo
             {
-                Title = "Select file",
-                AllowMultiple = false,
-                Filters = new List<FileDialogFilter>
-                {
-                    new FileDialogFilter { Name = "backup", Extensions = { "backup" } }
-                }
+                FileName = "createdb",
+                Arguments = $"-h {DbHost} -p {DbPort} -U {DbUsername} {DbName}",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
             };
+            createDbPsi.Environment["PGPASSWORD"] = DbPassword;
 
-            var result = await dialog.ShowAsync(parent);
-            return result?.Length > 0 ? result[0] : null;
-        }
-        
-        public async Task<string?> OpenSaveDialog(Window parent)
-        {
-            var dialog = new SaveFileDialog
+            try
             {
-                Title = "Save File",
-                InitialFileName = $"{DbName}.backup",
-                Filters = new List<FileDialogFilter>
+                using var createProcess = Process.Start(createDbPsi);
+                string createOutput = await createProcess.StandardOutput.ReadToEndAsync();
+                string createError = await createProcess.StandardError.ReadToEndAsync();
+                await createProcess.WaitForExitAsync();
+
+                if (createProcess.ExitCode != 0)
                 {
-                    new FileDialogFilter { Name = "SQL Files", Extensions = { "sql" } }
+                    ErrorMessage = $"Nie udało się utworzyć bazy danych:\n{createError}";
+                    return;
                 }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Błąd tworzenia bazy danych: {ex.Message}";
+                return;
+            }
+
+            var filePath = await FileDialog.OpenFileDialog(new List<(string, List<string>)>
+                {
+                    ("Backup Files", new List<string> { "backup" })
+                }, $"{DbName}.backup");
+            
+            if (string.IsNullOrEmpty(filePath))
+                return;
+
+            var restorePsi = new ProcessStartInfo
+            {
+                FileName = "pg_restore",
+                Arguments = $"-h {DbHost} -p {DbPort} -U {DbUsername} -d {DbName} -v \"{filePath}\"",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
             };
+            restorePsi.Environment["PGPASSWORD"] = DbPassword;
 
-            return await dialog.ShowAsync(parent);
-        }
-        
-        public Window? GetMainWindow()
-        {
-            return Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
-                ? desktop.MainWindow
-                : null;
-        }
+            try
+            {
+                using var restoreProcess = Process.Start(restorePsi);
+                string restoreOutput = await restoreProcess.StandardOutput.ReadToEndAsync();
+                string restoreError = await restoreProcess.StandardError.ReadToEndAsync();
+                await restoreProcess.WaitForExitAsync();
 
+                ErrorMessage = restoreProcess.ExitCode == 0
+                    ? "Import zakończony pomyślnie!"
+                    : $"Import nie powiódł się:\n{restoreError}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Błąd importu: {ex.Message}";
+            }
+        }
     }
 }

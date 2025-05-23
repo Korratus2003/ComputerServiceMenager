@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
 using ComputerServiceManager.Database;
 using ComputerServiceManager.Utils;
 
@@ -17,6 +19,9 @@ namespace ComputerServiceManager.ViewModels
         [ObservableProperty]
         private Technician _technician = new Technician();
 
+        [ObservableProperty] 
+        private Bitmap _image;
+        
         [ObservableProperty] 
         private string _error = "";
 
@@ -105,6 +110,23 @@ namespace ComputerServiceManager.ViewModels
         private void Cancel()
         {
             ViewMediator.Instance.ChangeView(new TechniciansPageViewModel());
+        }
+        
+        [RelayCommand]
+        private async Task AddPhoto()
+        {
+            string photoPath = null;
+            try
+            {
+                photoPath = await FileDialog.OpenImageDialog();
+                Image = new Bitmap(photoPath);
+                Technician.ImageUrl = photoPath;
+            }
+            catch (Exception e)
+            {
+                
+            }
+            
         }
 
     }

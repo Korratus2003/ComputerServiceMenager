@@ -76,13 +76,11 @@ namespace ComputerServiceManager.ViewModels
         private void ApplyFilters()
         {
             var filtered = _allTechnicians.AsEnumerable();
-
-            // Filtr wg statusu aktywności
+            
             filtered = filtered.Where(t =>
                 (ShowActive && t.IsActive)
                 || (ShowInactive && !t.IsActive));
-
-            // Wyszukiwanie po imieniu, nazwisku lub telefonie
+            
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
                 var lower = SearchText.Trim().ToLower();

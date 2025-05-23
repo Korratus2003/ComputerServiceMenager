@@ -19,38 +19,70 @@
         <Style Selector="Button:pressed /template/ ContentPresenter">
             <Setter Property="BoxShadow" Value="0 0 1 white"></Setter>
         </Style>
+        <Style Selector="Button">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="#FFFAFF"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
     </UserControl.Styles>
     
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" >
-    <Border CornerRadius="20"  Background="#FC5130" BoxShadow="0 0 20 black" Padding="20" >
-        <StackPanel VerticalAlignment="Center" >
-            <StackPanel HorizontalAlignment="Left">
-                <TextBlock Text="Edit Technician" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" />
-                
-                <TextBlock Text="NAME:" />
-                <TextBox Width="300" Text="{Binding Technician.Name}" />
-
-                <TextBlock Text="SURNAME:" Margin="0,10,0,0" />
-                <TextBox Width="300" Text="{Binding Technician.Surname}" />
-
-                <TextBlock Text="PHONE NUMNBER" Margin="0,10,0,0" />
-                <TextBox Width="300" Text="{Binding Technician.PhoneNumber}" />
-
-                <TextBlock Text="EMPLOYMENT DATE:" Margin="0,10,0,0" />
-                <DatePicker Width="300" SelectedDate="{Binding Technician.EmploymentDate}" />
-                
-                <TextBlock Text="IMAGE URL:" />
-                <TextBox Width="300" Text="{Binding Technician.ImageUrl}" />
-                
-                <StackPanel Margin="0 10 0 0" Orientation="Horizontal" Spacing="10">
-                    <TextBlock Text="IS EMPLOYED:" VerticalAlignment="Center"/>
-                    <CheckBox IsChecked="{Binding Technician.IsActive}" VerticalAlignment="Center"/>
+    <Border CornerRadius="20"  Background="#FC5130" BoxShadow="0 0 20 black" ClipToBounds="True">
+        <StackPanel VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Margin="20">
+                    <TextBlock Text="Edit Technician" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" />
+                    <StackPanel Margin="50">
+                        <StackPanel VerticalAlignment="Center">
+                            <Border CornerRadius="100" Background="#AAAAAA" Height="150" Width="150" ClipToBounds="True">
+                                <Image Source="{Binding Image}" Height="150" Stretch="UniformToFill"/>
+                            </Border>
+                            <Button HorizontalAlignment="Center" Command="{Binding AddPhotoCommand}">
+                                <TextBlock>Change photo</TextBlock>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
-                <TextBlock Margin="10" HorizontalAlignment="Center" Text="{Binding Error}" FontWeight="Bold" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Command="{Binding SaveCommand}"  Width="100" HorizontalAlignment="Center" Margin="10" CornerRadius="15" FontWeight="Bold" Background="#FFFAFF" Cursor="Hand"><TextBlock Text="SAVE" HorizontalAlignment="Center" Margin="10"/></Button>
-                    <Button Command="{Binding CancelCommand}"  Width="100" HorizontalAlignment="Center" Margin="10" CornerRadius="15" FontWeight="Bold" Background="#FFFAFF" Cursor="Hand"><TextBlock Text="CANCEL" HorizontalAlignment="Center" Margin="10"/></Button>
+                
+                <StackPanel  Background="#EEEEEE">
+                    <StackPanel Margin="20">
+                        <TextBlock Text="NAME:" />
+                        <TextBox Text="{Binding Technician.Name}" />
+
+                        <TextBlock Text="SURNAME:" Margin="0,10,0,0" />
+                        <TextBox Text="{Binding Technician.Surname}" />
+
+                        <TextBlock Text="PHONE NUMNBER" Margin="0,10,0,0" />
+                        <TextBox Text="{Binding Technician.PhoneNumber}" />
+
+                        <TextBlock Text="EMPLOYMENT DATE:" Margin="0,10,0,0" />
+                        <DatePicker SelectedDate="{Binding Technician.EmploymentDate}" />
+                    
+                        <StackPanel Margin="0 10 0 0" Orientation="Horizontal" Spacing="10">
+                            <CheckBox IsChecked="{Binding IsActive}" VerticalAlignment="Center"/>
+                            <Border CornerRadius="6" ClipToBounds="True" Background="Black" VerticalAlignment="Center">
+                                <StackPanel>
+                                    <StackPanel IsVisible="{Binding !IsActive}" Background="#AAFF0000">
+                                        <TextBlock Padding="6" Text="FIRED" />
+                                    </StackPanel>
+                                    <StackPanel IsVisible="{Binding IsActive}" Background="#AA008000">
+                                        <TextBlock Padding="6" Text="EMPLOYED"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>    
+                        </StackPanel>
+                        <TextBlock Margin="10" HorizontalAlignment="Center" Text="{Binding Error}" FontWeight="Bold" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Background="#FC5130" Command="{Binding SaveCommand}"  Width="120"><TextBlock Text="SAVE" HorizontalAlignment="Center" Margin="10"/></Button>
+                            <Button Background="#FC5130" Command="{Binding CancelCommand}"  Width="120"><TextBlock Text="CANCEL" HorizontalAlignment="Center" Margin="10"/></Button>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
+                
             </StackPanel>
         </StackPanel>
     </Border>

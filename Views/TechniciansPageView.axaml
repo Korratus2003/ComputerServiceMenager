@@ -61,7 +61,7 @@
                     <Border Classes="shadow" Height="300" CornerRadius="10" Background="#EEEEEE" Cursor="Hand">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="5" Margin="10">
                             <Border CornerRadius="100" Background="#AAAAAA" Height="150" Width="150" ClipToBounds="True">
-                                <Image Source="{Binding Image }" Height="150"/>
+                                <Image Source="{Binding Image }" Height="150" Stretch="UniformToFill"/>
                             </Border>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBlock Classes="High" Text="{Binding Name}" />

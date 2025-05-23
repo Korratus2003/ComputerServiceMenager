@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ComputerServiceManager.Database;
@@ -11,16 +15,24 @@ namespace ComputerServiceManager.ViewModels;
 public partial class EditTechnicianPageViewModel : ViewModelBase
 {
     private readonly AppDbContext _dbContext = new AppDbContext();
-
+    
     [ObservableProperty]
     private Technician _technician = new Technician();
 
+    [ObservableProperty] 
+    private Bitmap _image;
+
+    [ObservableProperty] 
+    private bool _isActive;
+    
     [ObservableProperty] 
     private string _error = "";
     
     public EditTechnicianPageViewModel(int technicianId)
     {
         Technician =_dbContext.Technicians.Find(technicianId);
+        Image = Technician.Image;
+        IsActive = Technician.IsActive;
     }
 
     [RelayCommand]
@@ -31,14 +43,11 @@ public partial class EditTechnicianPageViewModel : ViewModelBase
                 Technician.Name = Texts.Capitalize(Technician.Name);
                 Technician.Surname = Texts.Capitalize(Technician.Surname);
                 Technician.EmploymentDate = Technician.EmploymentDate.Value.ToUniversalTime();
-                
-                
                 try
                 {
                     _dbContext.Technicians.Update(Technician);
                     _dbContext.SaveChanges();
-            
-                    ViewMediator.Instance.ChangeView(new TechniciansPageViewModel());
+                    
                 }
                 catch (Exception e)
                 {
@@ -97,5 +106,24 @@ public partial class EditTechnicianPageViewModel : ViewModelBase
         {
             ViewMediator.Instance.ChangeView(new TechniciansPageViewModel());
         }
+
+        [RelayCommand]
+        private async Task AddPhoto()
+        {
+            string photoPath = null;
+            try
+            {
+                photoPath = await FileDialog.OpenImageDialog();
+                Image = new Bitmap(photoPath);
+                Technician.ImageUrl = photoPath;
+            }
+            catch (Exception e)
+            {
+                
+            }
+            
+        }
+        
+        
         
 }
