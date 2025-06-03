@@ -8,7 +8,7 @@ public class AppDbContext : DbContext
 
 {
         public DbSet<Client> Clients { get; set; }
-        public DbSet<Magazine> Magazines { get; set; }
+        public DbSet<SaleDevice> SaleDevices { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Technician> Technicians { get; set; }
         public DbSet<User> Users { get; set; }
@@ -51,8 +51,8 @@ public class AppDbContext : DbContext
                 entity.Property(e => e.CreatedAt).IsRequired();
             });
 
-            // Konfiguracja tabeli Magazine
-            modelBuilder.Entity<Magazine>(entity =>
+            // Konfiguracja tabeli SaleDevices
+            modelBuilder.Entity<SaleDevice>(entity =>
             {
                 entity.Property(e => e.Name)
                       .HasMaxLength(255)
@@ -67,19 +67,19 @@ public class AppDbContext : DbContext
             // Konfiguracja tabeli Devices
             modelBuilder.Entity<Device>(entity =>
             {
-                entity.Property(e => e.Name)
-                      .HasMaxLength(255)
-                      .IsRequired();
+                  entity.Property(e => e.Name)
+                        .HasMaxLength(255)
+                        .IsRequired();
 
-                entity.Property(e => e.SerialNumber)
-                      .HasMaxLength(100);
+                  entity.Property(e => e.SerialNumber)
+                        .HasMaxLength(100);
 
-                entity.HasOne(d => d.Magazine)
-                      .WithMany(m => m.Devices)
-                      .HasForeignKey(d => d.MagazineId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                  entity.HasOne(d => d.SaleDevice)
+                        .WithMany(m => m.Devices)
+                        .HasForeignKey(d => d.SaleDeviceId)
+                        .OnDelete(DeleteBehavior.Cascade);
             });
-
+            
             // Konfiguracja tabeli Technicians
             modelBuilder.Entity<Technician>(entity =>
             {

@@ -2,7 +2,251 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ComputerServiceManager.Views.SalesPageView">
-    sprzedaż
+             xmlns:vm="using:ComputerServiceManager.ViewModels"
+             mc:Ignorable="d"
+             d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ComputerServiceManager.Views.SalesPageView"
+             x:DataType="vm:SalesPageViewModel">
+
+  <UserControl.Styles>
+    <Style Selector="TextBlock.bold">
+      <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+    <Style Selector="TextBlock.white">
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="#FFF" />
+      <Setter Property="CornerRadius" Value="10" />
+    </Style>
+    <Style Selector="Border.shadow:pointerover">
+      <Setter Property="BoxShadow" Value="0 0 10 white" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid RowDefinitions="Auto, *"
+        ColumnDefinitions="*,*">
+    <!-- LEWA CZĘŚĆ: Pozycje na rachunku -->
+    <Border Grid.Row="1" Grid.Column="0" Padding="10" Background="#333">
+      <Grid RowDefinitions="Auto, *, Auto">
+        <TextBlock Text="Pozycje na rachunku"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Grid.Row="0"
+                   Margin="0,0,0,6"
+                   Classes="bold white"/>
+
+        <ScrollViewer Grid.Row="1">
+          <ListBox ItemsSource="{Binding InvoiceItems}"
+                   Background="Transparent"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="shadow"
+                        CornerRadius="4"
+                        Padding="12"
+                        Background="#FFF"
+                        Margin="0,0,0,6">
+                  <Grid ColumnDefinitions="2*, 1*, 1.2*, 1.2*"
+                        VerticalAlignment="Center">
+                    <!-- Nazwa urządzenia -->
+                    <TextBlock Text="{Binding Name}"
+                               FontWeight="SemiBold"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"
+                               TextWrapping="Wrap"
+                               TextTrimming="CharacterEllipsis"/>
+
+                    <!-- Ilość -->
+                    <StackPanel Grid.Column="1"
+                                HorizontalAlignment="Center">
+                      <TextBlock Text="Ilość:"
+                                 FontSize="12"
+                                 Foreground="Gray"
+                                 TextAlignment="Center"/>
+                      <TextBlock Text="{Binding Quantity}"
+                                 FontWeight="Bold"
+                                 FontSize="14"
+                                 TextAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Netto (linia) -->
+                    <StackPanel Grid.Column="2"
+                                HorizontalAlignment="Right"
+                                Margin="0,0,10,0">
+                      <TextBlock Text="Netto:"
+                                 FontSize="12"
+                                 Foreground="Gray"
+                                 TextAlignment="Right"/>
+                      <TextBlock Text="{Binding LineNet, StringFormat=0.00}"
+                                 FontWeight="Bold"
+                                 FontSize="14"
+                                 TextAlignment="Right"/>
+                    </StackPanel>
+
+                    <!-- Brutto (linia) -->
+                    <StackPanel Grid.Column="3"
+                                HorizontalAlignment="Right">
+                      <TextBlock Text="Brutto:"
+                                 FontSize="12"
+                                 Foreground="Gray"
+                                 TextAlignment="Right"/>
+                      <TextBlock Text="{Binding LineGross, StringFormat=0.00}"
+                                 FontWeight="Bold"
+                                 FontSize="14"
+                                 TextAlignment="Right"/>
+                    </StackPanel>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    Spacing="10"
+                    Margin="0,6,0,0">
+          <Button Command="{Binding GenerateBillCommand}" Background="White">Generuj rachunek</Button>
+          <TextBlock Text="Razem netto:" Classes="bold white"/>
+          <TextBlock Text="{Binding TotalNet, StringFormat=0.00}"
+                     FontWeight="Bold"
+                     Classes="bold white"/>
+          <TextBlock Text="VAT 23%:" Classes="bold white"/>
+          <TextBlock Text="{Binding TotalVat, StringFormat=0.00}"
+                     FontWeight="Bold"
+                     Classes="bold white"/>
+          <TextBlock Text="Razem brutto:" Classes="bold white"/>
+          <TextBlock Text="{Binding TotalGross, StringFormat=0.00}"
+                     FontWeight="Bold"
+                     Classes="bold white"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+    
+    <!-- PRAWA CZĘŚĆ: Lista dostępnych urządzeń, wyszukiwanie i przycisk dodawania -->
+    <Border Grid.Row="1"
+            Grid.Column="1"
+            Background="#FC5130"
+            CornerRadius="5 0 0 5"
+            Padding="10">
+      <Grid RowDefinitions="Auto, *, 50">
+        
+        <!-- Wiersz 0: Wyszukiwarka + Dodaj + Przełączniki -->
+        <StackPanel Grid.Row="0"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Spacing="10"
+                    Margin="0 0 0 20">
+          <!-- Pole wyszukiwania -->
+          <StackPanel IsVisible="{Binding !IsServiceMode}"
+                      Orientation="Horizontal"
+                      Spacing="10">
+            <TextBox Width="200"
+                     Height="30"
+                     Watermark="Wyszukaj urządzenie..."
+                     Text="{Binding SearchQuery}"/>
+            <Button Command="{Binding SearchCommand}"
+                    Background="#EEEEEE">
+              <TextBlock VerticalAlignment="Center"
+                         HorizontalAlignment="Center">
+                Szukaj
+              </TextBlock>
+            </Button>
+          </StackPanel>
+          
+          <!-- Przyciski -->
+          <StackPanel>
+            <Button Width="200"
+                    Height="70"
+                    Background="#EEEEEE"
+                    Command="{Binding AddInvoiceItemCommand}">
+              <TextBlock VerticalAlignment="Center"
+                         TextAlignment="Center">
+                Dodaj do rachunku
+              </TextBlock>
+            </Button>
+          </StackPanel>
+          
+          <StackPanel Spacing="10">
+            <Button Command="{Binding SwitchToSellCommand}"
+                    Background="#EEEEEE"
+                    Width="120">
+              <TextBlock VerticalAlignment="Center"
+                         HorizontalAlignment="Center">
+                Devices
+              </TextBlock>
+            </Button>
+            <Button Command="{Binding SwitchToServiceCommand}"
+                    Background="#EEEEEE"
+                    Width="120">
+              <TextBlock VerticalAlignment="Center"
+                         HorizontalAlignment="Center">
+                Service
+              </TextBlock>
+            </Button>
+          </StackPanel>
+        </StackPanel>
+
+        <!-- Wiersz 1: Lista urządzeń -->
+        <Border Grid.Row="1"
+                CornerRadius="6"
+                IsVisible="{Binding IsSellMode}">
+          <ScrollViewer>
+            <ListBox ItemsSource="{Binding AvailableSaleDevices}"
+                     SelectedItem="{Binding SelectedSaleDevice}"
+                     Background="Transparent"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Stretch">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <Border CornerRadius="4"
+                          Background="#FFF"
+                          Classes="shadow"
+                          Margin="0,0,0,3">
+                    <Grid ColumnDefinitions="*, Auto"
+                          MaxHeight="80">
+                      <!-- Nazwa urządzenia -->
+                      <StackPanel Grid.Column="0"
+                                  VerticalAlignment="Center"
+                                  Margin="20 0 10 0">
+                        <TextBlock MaxHeight="80"
+                                   Text="{Binding Name}"
+                                   Classes="bold"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   TextTrimming="CharacterEllipsis"/>
+                      </StackPanel>
+                      <!-- Cena neto -->
+                      <StackPanel Grid.Column="1"
+                                  Orientation="Horizontal"
+                                  VerticalAlignment="Center"
+                                  Spacing="6"
+                                  Height="80">
+                        <TextBlock VerticalAlignment="Center"
+                                   Text="Cena netto: "/>
+                        <TextBlock VerticalAlignment="Center"
+                                   Text="{Binding DefaultPrice, StringFormat=0.00}"
+                                   Classes="bold"
+                                   HorizontalAlignment="Right"
+                                   Margin="0 0 5 0"/>
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </ScrollViewer>
+        </Border>
+      </Grid>
+    </Border>
+  </Grid>
 </UserControl>

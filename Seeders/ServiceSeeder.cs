@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ComputerServiceManager.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComputerServiceManager.Seeders
 {
@@ -11,11 +12,10 @@ namespace ComputerServiceManager.Seeders
         {
             if (context.Services.Any())
                 return;
-                
+
             var clients = context.Clients.ToList();
-            var devices = context.Devices.ToList();
+            var devices = context.Devices.Include(d => d.SaleDevice).ToList();
             var technicians = context.Technicians.ToList();
-            var magazinePrices = context.Magazines.ToDictionary(m => m.Id, m => m.DefaultPrice);
 
             if (!clients.Any() || !devices.Any() || !technicians.Any())
             {
@@ -31,7 +31,7 @@ namespace ComputerServiceManager.Seeders
                     ClientId = clients.First().Id,
                     TechnicianId = technicians.First().Id,
                     Description = "Naprawa laptopa Dell XPS 15",
-                    Price = magazinePrices[devices.First().MagazineId],
+                    Price = devices.First().SaleDevice?.DefaultPrice ?? 0m,
                     Status = ServiceStatus.Pending,
                     Date = DateTime.UtcNow.AddDays(-1)
                 },
@@ -42,7 +42,7 @@ namespace ComputerServiceManager.Seeders
                     ClientId = clients.ElementAtOrDefault(1)?.Id ?? clients.First().Id,
                     TechnicianId = technicians.ElementAtOrDefault(1)?.Id ?? technicians.First().Id,
                     Description = "Sprzedaż smartfona Samsung Galaxy S21",
-                    Price = magazinePrices[devices.ElementAtOrDefault(1)?.MagazineId ?? devices.First().MagazineId],
+                    Price = devices.ElementAtOrDefault(1)?.SaleDevice?.DefaultPrice ?? devices.First().SaleDevice?.DefaultPrice ?? 0m,
                     Status = ServiceStatus.Completed,
                     Date = DateTime.UtcNow.AddDays(-2)
                 },
@@ -53,7 +53,7 @@ namespace ComputerServiceManager.Seeders
                     ClientId = clients.ElementAtOrDefault(2)?.Id ?? clients.First().Id,
                     TechnicianId = technicians.First().Id,
                     Description = "Aktualizacja oprogramowania tabletu Apple iPad Pro",
-                    Price = magazinePrices[devices.ElementAtOrDefault(2)?.MagazineId ?? devices.First().MagazineId],
+                    Price = devices.ElementAtOrDefault(2)?.SaleDevice?.DefaultPrice ?? devices.First().SaleDevice?.DefaultPrice ?? 0m,
                     Status = ServiceStatus.InProgress,
                     Date = DateTime.UtcNow
                 }

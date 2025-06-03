@@ -43,6 +43,7 @@ public partial class EditTechnicianPageViewModel : ViewModelBase
                 Technician.Name = Texts.Capitalize(Technician.Name);
                 Technician.Surname = Texts.Capitalize(Technician.Surname);
                 Technician.EmploymentDate = Technician.EmploymentDate.Value.ToUniversalTime();
+                Technician.IsActive = IsActive;
                 try
                 {
                     _dbContext.Technicians.Update(Technician);

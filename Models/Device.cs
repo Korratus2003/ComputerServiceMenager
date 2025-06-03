@@ -6,7 +6,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 public class Device
 {
     public int Id { get; set; }
-    public int MagazineId { get; set; }
 
     [Required, MaxLength(255)]
     public string Name { get; set; } 
@@ -15,7 +14,10 @@ public class Device
     public string SerialNumber { get; set; }
 
     public string Description { get; set; }
+    public int SaleDeviceId { get; set; } 
     
-    public Magazine Magazine { get; set; }
+    [ForeignKey("SaleDeviceId")]
+    public SaleDevice SaleDevice { get; set; }
+
     public ICollection<Service> Services { get; set; }
 }

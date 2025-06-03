@@ -73,13 +73,13 @@ namespace ComputerServiceManager.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("MagazineId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
+
+                    b.Property<int>("SaleDeviceId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
@@ -88,12 +88,12 @@ namespace ComputerServiceManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MagazineId");
+                    b.HasIndex("SaleDeviceId");
 
                     b.ToTable("Devices");
                 });
 
-            modelBuilder.Entity("Magazine", b =>
+            modelBuilder.Entity("SaleDevice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -101,12 +101,19 @@ namespace ComputerServiceManager.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<decimal>("DefaultPrice")
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("DeviceId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -118,7 +125,7 @@ namespace ComputerServiceManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Magazine");
+                    b.ToTable("SaleDevices");
                 });
 
             modelBuilder.Entity("Service", b =>
@@ -239,13 +246,13 @@ namespace ComputerServiceManager.Migrations
 
             modelBuilder.Entity("Device", b =>
                 {
-                    b.HasOne("Magazine", "Magazine")
+                    b.HasOne("SaleDevice", "SaleDevice")
                         .WithMany("Devices")
-                        .HasForeignKey("MagazineId")
+                        .HasForeignKey("SaleDeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Magazine");
+                    b.Navigation("SaleDevice");
                 });
 
             modelBuilder.Entity("Service", b =>
@@ -295,7 +302,7 @@ namespace ComputerServiceManager.Migrations
                     b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("Magazine", b =>
+            modelBuilder.Entity("SaleDevice", b =>
                 {
                     b.Navigation("Devices");
                 });

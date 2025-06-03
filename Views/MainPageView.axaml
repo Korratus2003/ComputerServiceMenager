@@ -46,7 +46,7 @@
            </StackPanel>
         </SplitView.Pane>
         <SplitView.Content>
-            <TransitioningContentControl Content="{Binding ActiveViewModel}" Margin="10"/>
+            <TransitioningContentControl Content="{Binding ActiveViewModel}"/>
         </SplitView.Content>
     </SplitView>
 </UserControl>

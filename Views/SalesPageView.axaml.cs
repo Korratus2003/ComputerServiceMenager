@@ -9,5 +9,6 @@ public partial class SalesPageView : UserControl
     public SalesPageView()
     {
         InitializeComponent();
+
     }
 }

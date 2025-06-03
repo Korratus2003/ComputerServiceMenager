@@ -15,7 +15,7 @@ sealed class Program
         {
             dbContext.Database.EnsureCreated();
             
-            MagazineSeeder.Seed(dbContext);
+            SaleDevicesSeeder.Seed(dbContext);
             ClientSeeder.Seed(dbContext);
             TechnicianSeeder.Seed(dbContext);
             DeviceSeeder.Seed(dbContext);
