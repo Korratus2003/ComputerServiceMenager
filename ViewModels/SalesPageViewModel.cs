@@ -16,120 +16,41 @@ namespace ComputerServiceManager.ViewModels
         public SalesPageViewModel()
         {
             _context = new AppDbContext();
-            
-            IsSellMode = true;
-            IsServiceMode = false;
-
-            LoadAvailableMagazines();
+            LoadAvailableServiceTypes();
         }
+
+        [ObservableProperty]
+        private ObservableCollection<ServiceType> availableServiceTypes = new();
+
+        [ObservableProperty]
+        private ServiceType selectedServiceType;
 
         [ObservableProperty]
         private ObservableCollection<InvoiceItem> invoiceItems = new();
 
-        [ObservableProperty]
-        private ObservableCollection<SaleDevice> availableSaleDevices = new();
-
-        [ObservableProperty]
-        private SaleDevice selectedSaleDevice;
-
-        [ObservableProperty]
-        private bool isSellMode;
-
-        [ObservableProperty]
-        private bool isServiceMode;
-
-        [ObservableProperty]
-        private string serviceDescription;
-
-        [ObservableProperty]
-        private string servicePrice;
-        
-        [ObservableProperty]
-        private string searchQuery;
-        
         public decimal TotalNet => InvoiceItems.Sum(i => i.LineNet);
-        
         public decimal TotalVat => InvoiceItems.Sum(i => i.LineVat);
-        
         public decimal TotalGross => InvoiceItems.Sum(i => i.LineGross * i.Quantity);
 
-        private void LoadAvailableMagazines()
+        private void LoadAvailableServiceTypes()
         {
-            var devices = _context.SaleDevices
-                .Where(d => d.Quantity > 0)
-                .OrderByDescending(d => d.Id)
-                .Take(20)
+            var services = _context.ServiceTypes
+                .OrderBy(s => s.Name)
                 .AsNoTracking()
                 .ToList();
 
-            AvailableSaleDevices.Clear();
-            foreach (var device in devices)
-                AvailableSaleDevices.Add(device);
-        }
-
-        public string AddButtonText => IsSellMode ? "Dodaj urządzenie" : "Dodaj usługę";
-
-        [RelayCommand]
-        private void SwitchToSell()
-        {
-            IsSellMode = true;
-            IsServiceMode = false;
-        }
-
-        [RelayCommand]
-        private void SwitchToService()
-        {
-            IsSellMode = false;
-            IsServiceMode = true;
-        }
-        
-        [RelayCommand]
-        private void GenerateBill()
-        {
-            var produkty = InvoiceItems.Select(item => new Produkt
-            {
-                Nazwa = item.Name,
-                Ilosc = item.Quantity,
-                Cena = item.LineGross,
-                StawkaVAT = 'A'
-            }).ToList();
-
-            GenerateBillUtility.DrukujParagon(produkty);
-            
-            InvoiceItems.Clear();
-            OnPropertyChanged(nameof(TotalNet));
-            OnPropertyChanged(nameof(TotalVat));
-            OnPropertyChanged(nameof(TotalGross));
-        }
-
-        [RelayCommand]
-        private void Search()
-        {
-            if (string.IsNullOrWhiteSpace(SearchQuery))
-            {
-                LoadAvailableMagazines();
-            }
-            else
-            {
-                var filtered = _context.SaleDevices
-                    .Where(d => d.Quantity > 0 && d.Name.ToLower().Contains(SearchQuery.ToLower()))
-                    .OrderBy(d => d.Name)
-                    .AsNoTracking()
-                    .ToList();
-
-                AvailableSaleDevices.Clear();
-                foreach (var device in filtered)
-                    AvailableSaleDevices.Add(device);
-            }
+            AvailableServiceTypes.Clear();
+            foreach (var service in services)
+                AvailableServiceTypes.Add(service);
         }
 
         [RelayCommand]
         private void AddInvoiceItem()
         {
-            if (SelectedSaleDevice == null)
+            if (SelectedServiceType == null)
                 return;
-            
-            var existing = InvoiceItems.FirstOrDefault(x => x.DeviceId == SelectedSaleDevice.Id);
+
+            var existing = InvoiceItems.FirstOrDefault(x => x.ServiceTypeId == SelectedServiceType.Id);
             if (existing != null)
             {
                 existing.Quantity++;
@@ -139,15 +60,34 @@ namespace ComputerServiceManager.ViewModels
             {
                 var newItem = new InvoiceItem
                 {
-                    DeviceId = SelectedSaleDevice.Id,
-                    Name = SelectedSaleDevice.Name,
-                    Type = SelectedSaleDevice.Category,
-                    NetPrice = SelectedSaleDevice.DefaultPrice,
+                    ServiceTypeId = SelectedServiceType.Id,
+                    Name = SelectedServiceType.Name,
+                    Type = "Usługa",
+                    NetPrice = SelectedServiceType.DefaultPrice,
                     Quantity = 1
                 };
                 InvoiceItems.Add(newItem);
             }
-            
+
+            OnPropertyChanged(nameof(TotalNet));
+            OnPropertyChanged(nameof(TotalVat));
+            OnPropertyChanged(nameof(TotalGross));
+        }
+
+        [RelayCommand]
+        private void GenerateBill()
+        {
+            var produkty = InvoiceItems.Select(item => new Produkt
+            {
+                Nazwa = item.Name,
+                Ilosc = item.Quantity,
+                Cena = item.LineGross,
+                StawkaVAT = 'A' // Możesz zmienić, jeśli masz różne stawki
+            }).ToList();
+
+            GenerateBillUtility.DrukujParagon(produkty);
+
+            InvoiceItems.Clear();
             OnPropertyChanged(nameof(TotalNet));
             OnPropertyChanged(nameof(TotalVat));
             OnPropertyChanged(nameof(TotalGross));
@@ -157,24 +97,24 @@ namespace ComputerServiceManager.ViewModels
     public partial class InvoiceItem : ObservableObject
     {
         [ObservableProperty]
-        private int deviceId;
+        private int serviceTypeId;
 
         [ObservableProperty]
         private string name;
 
         [ObservableProperty]
         private string type;
-        
+
         [ObservableProperty]
         private decimal netPrice;
-        
+
         [ObservableProperty]
         private int quantity;
-        
-        public decimal LineNet => Math.Round(NetPrice, 2); 
+
+        public decimal LineNet => Math.Round(NetPrice, 2);
         public decimal LineVat => Math.Round(LineNet * 0.23m, 2);
         public decimal LineGross => Math.Round(LineNet + LineVat, 2);
-        
+
         internal void OnQuantityChanged()
         {
             OnPropertyChanged(nameof(Quantity));
@@ -182,6 +122,5 @@ namespace ComputerServiceManager.ViewModels
             OnPropertyChanged(nameof(LineVat));
             OnPropertyChanged(nameof(LineGross));
         }
-
     }
 }

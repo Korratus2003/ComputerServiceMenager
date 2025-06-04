@@ -55,7 +55,7 @@
                         Margin="0,0,0,6">
                   <Grid ColumnDefinitions="2*, 1*, 1.2*, 1.2*"
                         VerticalAlignment="Center">
-                    <!-- Nazwa urządzenia -->
+                    <!-- Nazwa serwisu -->
                     <TextBlock Text="{Binding Name}"
                                FontWeight="SemiBold"
                                Grid.Column="0"
@@ -130,122 +130,78 @@
         </StackPanel>
       </Grid>
     </Border>
-    
-    <!-- PRAWA CZĘŚĆ: Lista dostępnych urządzeń, wyszukiwanie i przycisk dodawania -->
+
+    <!-- PRAWA CZĘŚĆ: Lista serwisów i przycisk dodawania -->
     <Border Grid.Row="1"
             Grid.Column="1"
             Background="#FC5130"
             CornerRadius="5 0 0 5"
             Padding="10">
-      <Grid RowDefinitions="Auto, *, 50">
+      <Grid RowDefinitions="Auto, *, Auto">
         
-        <!-- Wiersz 0: Wyszukiwarka + Dodaj + Przełączniki -->
-        <StackPanel Grid.Row="0"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Center"
-                    Spacing="10"
-                    Margin="0 0 0 20">
-          <!-- Pole wyszukiwania -->
-          <StackPanel IsVisible="{Binding !IsServiceMode}"
-                      Orientation="Horizontal"
-                      Spacing="10">
-            <TextBox Width="200"
-                     Height="30"
-                     Watermark="Wyszukaj urządzenie..."
-                     Text="{Binding SearchQuery}"/>
-            <Button Command="{Binding SearchCommand}"
-                    Background="#EEEEEE">
-              <TextBlock VerticalAlignment="Center"
-                         HorizontalAlignment="Center">
-                Szukaj
-              </TextBlock>
-            </Button>
-          </StackPanel>
-          
-          <!-- Przyciski -->
-          <StackPanel>
-            <Button Width="200"
-                    Height="70"
-                    Background="#EEEEEE"
-                    Command="{Binding AddInvoiceItemCommand}">
-              <TextBlock VerticalAlignment="Center"
-                         TextAlignment="Center">
-                Dodaj do rachunku
-              </TextBlock>
-            </Button>
-          </StackPanel>
-          
-          <StackPanel Spacing="10">
-            <Button Command="{Binding SwitchToSellCommand}"
-                    Background="#EEEEEE"
-                    Width="120">
-              <TextBlock VerticalAlignment="Center"
-                         HorizontalAlignment="Center">
-                Devices
-              </TextBlock>
-            </Button>
-            <Button Command="{Binding SwitchToServiceCommand}"
-                    Background="#EEEEEE"
-                    Width="120">
-              <TextBlock VerticalAlignment="Center"
-                         HorizontalAlignment="Center">
-                Service
-              </TextBlock>
-            </Button>
-          </StackPanel>
-        </StackPanel>
+        <!-- Nagłówek -->
+        <TextBlock Grid.Row="0"
+                   Text="Dostępne serwisy"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,10"
+                   Classes="bold white"/>
 
-        <!-- Wiersz 1: Lista urządzeń -->
-        <Border Grid.Row="1"
-                CornerRadius="6"
-                IsVisible="{Binding IsSellMode}">
-          <ScrollViewer>
-            <ListBox ItemsSource="{Binding AvailableSaleDevices}"
-                     SelectedItem="{Binding SelectedSaleDevice}"
-                     Background="Transparent"
-                     HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch">
-              <ListBox.ItemTemplate>
-                <DataTemplate>
-                  <Border CornerRadius="4"
-                          Background="#FFF"
-                          Classes="shadow"
-                          Margin="0,0,0,3">
-                    <Grid ColumnDefinitions="*, Auto"
-                          MaxHeight="80">
-                      <!-- Nazwa urządzenia -->
-                      <StackPanel Grid.Column="0"
-                                  VerticalAlignment="Center"
-                                  Margin="20 0 10 0">
-                        <TextBlock MaxHeight="80"
-                                   Text="{Binding Name}"
-                                   Classes="bold"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Center"
-                                   TextWrapping="Wrap"
-                                   TextTrimming="CharacterEllipsis"/>
-                      </StackPanel>
-                      <!-- Cena neto -->
-                      <StackPanel Grid.Column="1"
-                                  Orientation="Horizontal"
-                                  VerticalAlignment="Center"
-                                  Spacing="6"
-                                  Height="80">
-                        <TextBlock VerticalAlignment="Center"
-                                   Text="Cena netto: "/>
-                        <TextBlock VerticalAlignment="Center"
-                                   Text="{Binding DefaultPrice, StringFormat=0.00}"
-                                   Classes="bold"
-                                   HorizontalAlignment="Right"
-                                   Margin="0 0 5 0"/>
-                      </StackPanel>
-                    </Grid>
-                  </Border>
-                </DataTemplate>
-              </ListBox.ItemTemplate>
-            </ListBox>
-          </ScrollViewer>
-        </Border>
+        <!-- Lista serwisów -->
+        <ScrollViewer Grid.Row="1">
+          <ListBox ItemsSource="{Binding AvailableServiceTypes}"
+                   SelectedItem="{Binding SelectedServiceType}"
+                   Background="Transparent"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Border CornerRadius="4"
+                        Background="#FFF"
+                        Classes="shadow"
+                        Margin="0,0,0,3"
+                        Padding="10">
+                  <Grid ColumnDefinitions="*, Auto" MaxHeight="80">
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                      <TextBlock Text="{Binding Name}"
+                                 Classes="bold"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Center"
+                                 TextWrapping="Wrap"
+                                 TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Spacing="6"
+                                Height="80">
+                      <TextBlock VerticalAlignment="Center" Text="Cena netto: "/>
+                      <TextBlock VerticalAlignment="Center"
+                                 Text="{Binding DefaultPrice, StringFormat=0.00}"
+                                 Classes="bold"
+                                 HorizontalAlignment="Right"
+                                 Margin="0 0 5 0"/>
+                    </StackPanel>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </ScrollViewer>
+
+        <!-- Przycisk dodania serwisu do rachunku -->
+        <Button Grid.Row="2"
+                Command="{Binding AddInvoiceItemCommand}"
+                Background="#EEEEEE"
+                Height="50"
+                Margin="0,10,0,0">
+          <TextBlock VerticalAlignment="Center"
+                     TextAlignment="Center"
+                     FontWeight="Bold">
+            Dodaj serwis do rachunku
+          </TextBlock>
+        </Button>
+
       </Grid>
     </Border>
   </Grid>

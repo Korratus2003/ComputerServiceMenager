@@ -22,7 +22,7 @@ namespace ComputerServiceManager.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Client", b =>
+            modelBuilder.Entity("ComputerServiceManager.Database.Client", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -31,10 +31,9 @@ namespace ComputerServiceManager.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamptz");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
@@ -44,7 +43,6 @@ namespace ComputerServiceManager.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
@@ -53,15 +51,12 @@ namespace ComputerServiceManager.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<bool>("VisitsRegularly")
-                        .HasColumnType("boolean");
-
                     b.HasKey("Id");
 
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("Device", b =>
+            modelBuilder.Entity("ComputerServiceManager.Database.Device", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -69,8 +64,10 @@ namespace ComputerServiceManager.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTimeOffset?>("AddedAt")
+                        .HasColumnType("timestamptz");
+
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -78,54 +75,18 @@ namespace ComputerServiceManager.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int>("SaleDeviceId")
+                    b.Property<int>("OwnerClientId")
                         .HasColumnType("integer");
 
                     b.Property<string>("SerialNumber")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SaleDeviceId");
+                    b.HasIndex("OwnerClientId");
 
                     b.ToTable("Devices");
-                });
-
-            modelBuilder.Entity("SaleDevice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("DefaultPrice")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("DeviceId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SaleDevices");
                 });
 
             modelBuilder.Entity("Service", b =>
@@ -136,14 +97,10 @@ namespace ComputerServiceManager.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateTimeOffset>("Date")
+                        .HasColumnType("timestamptz");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("DeviceId")
@@ -152,24 +109,48 @@ namespace ComputerServiceManager.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<int>("ServiceTypeId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.Property<int>("TechnicianId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
-
                     b.HasIndex("DeviceId");
+
+                    b.HasIndex("ServiceTypeId");
 
                     b.HasIndex("TechnicianId");
 
                     b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("ServiceType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("DefaultPrice")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("ServiceTypes");
                 });
 
             modelBuilder.Entity("Technician", b =>
@@ -180,7 +161,7 @@ namespace ComputerServiceManager.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTimeOffset?>("EmploymentDate")
+                    b.Property<DateTime?>("EmploymentDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ImageUrl")
@@ -196,7 +177,6 @@ namespace ComputerServiceManager.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
@@ -244,28 +224,28 @@ namespace ComputerServiceManager.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Device", b =>
+            modelBuilder.Entity("ComputerServiceManager.Database.Device", b =>
                 {
-                    b.HasOne("SaleDevice", "SaleDevice")
+                    b.HasOne("ComputerServiceManager.Database.Client", "OwnerClient")
                         .WithMany("Devices")
-                        .HasForeignKey("SaleDeviceId")
+                        .HasForeignKey("OwnerClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("SaleDevice");
+                    b.Navigation("OwnerClient");
                 });
 
             modelBuilder.Entity("Service", b =>
                 {
-                    b.HasOne("Client", "Client")
+                    b.HasOne("ComputerServiceManager.Database.Device", "Device")
                         .WithMany("Services")
-                        .HasForeignKey("ClientId")
+                        .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Device", "Device")
+                    b.HasOne("ServiceType", "ServiceType")
                         .WithMany("Services")
-                        .HasForeignKey("DeviceId")
+                        .HasForeignKey("ServiceTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -275,9 +255,9 @@ namespace ComputerServiceManager.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Client");
-
                     b.Navigation("Device");
+
+                    b.Navigation("ServiceType");
 
                     b.Navigation("Technician");
                 });
@@ -285,33 +265,33 @@ namespace ComputerServiceManager.Migrations
             modelBuilder.Entity("User", b =>
                 {
                     b.HasOne("Technician", "Technician")
-                        .WithMany("User")
+                        .WithMany("Users")
                         .HasForeignKey("TechnicianId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Technician");
                 });
 
-            modelBuilder.Entity("Client", b =>
-                {
-                    b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("Device", b =>
-                {
-                    b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("SaleDevice", b =>
+            modelBuilder.Entity("ComputerServiceManager.Database.Client", b =>
                 {
                     b.Navigation("Devices");
+                });
+
+            modelBuilder.Entity("ComputerServiceManager.Database.Device", b =>
+                {
+                    b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("ServiceType", b =>
+                {
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("Technician", b =>
                 {
                     b.Navigation("Services");
 
-                    b.Navigation("User");
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

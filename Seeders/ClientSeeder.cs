@@ -20,7 +20,6 @@ namespace ComputerServiceManager.Seeders
                     Surname = "Kowalski",
                     PhoneNumber = "123456789",
                     Email = "jan.kowalski@przyklad.pl",
-                    VisitsRegularly = true,
                     CreatedAt = DateTime.UtcNow
                 },
                 new Client
@@ -29,7 +28,6 @@ namespace ComputerServiceManager.Seeders
                     Surname = "Nowak",
                     PhoneNumber = "987654321",
                     Email = "anna.nowak@przyklad.pl",
-                    VisitsRegularly = false,
                     CreatedAt = DateTime.UtcNow.AddDays(-30)
                 },
                 new Client
@@ -38,7 +36,6 @@ namespace ComputerServiceManager.Seeders
                     Surname = "Lewandowski",
                     PhoneNumber = "111222333",
                     Email = "marek.lewandowski@przyklad.pl",
-                    VisitsRegularly = true,
                     CreatedAt = DateTime.UtcNow.AddDays(-60)
                 }
             };

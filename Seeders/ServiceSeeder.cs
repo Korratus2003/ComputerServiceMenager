@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ComputerServiceManager.Database;
-using Microsoft.EntityFrameworkCore;
 
 namespace ComputerServiceManager.Seeders
 {
@@ -14,48 +13,47 @@ namespace ComputerServiceManager.Seeders
                 return;
 
             var clients = context.Clients.ToList();
-            var devices = context.Devices.Include(d => d.SaleDevice).ToList();
+            var devices = context.Devices.ToList();
             var technicians = context.Technicians.ToList();
+            var serviceTypes = context.ServiceTypes.ToList();
 
-            if (!clients.Any() || !devices.Any() || !technicians.Any())
-            {
-                throw new Exception("Brak klienta, urządzenia lub technika. Upewnij się, że poprzednie seedery działają poprawnie.");
-            }
+            if (!clients.Any() || !devices.Any() || !technicians.Any() || !serviceTypes.Any())
+                throw new Exception("Brak klienta, urządzenia, technika lub typu usługi. Upewnij się, że poprzednie seedery działają poprawnie.");
+
+            var repairServiceType = serviceTypes.FirstOrDefault(st => st.Name.Contains("Naprawa")) ?? serviceTypes.First();
+            var saleServiceType = serviceTypes.FirstOrDefault(st => st.Name.Contains("Sprzedaż")) ?? serviceTypes.First();
 
             var services = new List<Service>
             {
                 new Service
                 {
-                    Type = ServiceType.Service,
                     DeviceId = devices.First().Id,
-                    ClientId = clients.First().Id,
                     TechnicianId = technicians.First().Id,
+                    ServiceTypeId = repairServiceType.Id,
                     Description = "Naprawa laptopa Dell XPS 15",
-                    Price = devices.First().SaleDevice?.DefaultPrice ?? 0m,
+                    Price = repairServiceType.DefaultPrice,
                     Status = ServiceStatus.Pending,
-                    Date = DateTime.UtcNow.AddDays(-1)
+                    Date = DateTimeOffset.UtcNow.AddDays(-1)
                 },
                 new Service
                 {
-                    Type = ServiceType.Sale,
                     DeviceId = devices.ElementAtOrDefault(1)?.Id ?? devices.First().Id,
-                    ClientId = clients.ElementAtOrDefault(1)?.Id ?? clients.First().Id,
                     TechnicianId = technicians.ElementAtOrDefault(1)?.Id ?? technicians.First().Id,
+                    ServiceTypeId = saleServiceType.Id,
                     Description = "Sprzedaż smartfona Samsung Galaxy S21",
-                    Price = devices.ElementAtOrDefault(1)?.SaleDevice?.DefaultPrice ?? devices.First().SaleDevice?.DefaultPrice ?? 0m,
+                    Price = saleServiceType.DefaultPrice,
                     Status = ServiceStatus.Completed,
-                    Date = DateTime.UtcNow.AddDays(-2)
+                    Date = DateTimeOffset.UtcNow.AddDays(-2)
                 },
                 new Service
                 {
-                    Type = ServiceType.Service,
                     DeviceId = devices.ElementAtOrDefault(2)?.Id ?? devices.First().Id,
-                    ClientId = clients.ElementAtOrDefault(2)?.Id ?? clients.First().Id,
                     TechnicianId = technicians.First().Id,
+                    ServiceTypeId = repairServiceType.Id,
                     Description = "Aktualizacja oprogramowania tabletu Apple iPad Pro",
-                    Price = devices.ElementAtOrDefault(2)?.SaleDevice?.DefaultPrice ?? devices.First().SaleDevice?.DefaultPrice ?? 0m,
+                    Price = repairServiceType.DefaultPrice,
                     Status = ServiceStatus.InProgress,
-                    Date = DateTime.UtcNow
+                    Date = DateTimeOffset.UtcNow
                 }
             };
 

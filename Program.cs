@@ -15,10 +15,10 @@ sealed class Program
         {
             dbContext.Database.EnsureCreated();
             
-            SaleDevicesSeeder.Seed(dbContext);
             ClientSeeder.Seed(dbContext);
-            TechnicianSeeder.Seed(dbContext);
             DeviceSeeder.Seed(dbContext);
+            TechnicianSeeder.Seed(dbContext);
+            ServiceTypeSeeder.Seed(dbContext);
             //UserSeeder.Seed(dbContext);
             ServiceSeeder.Seed(dbContext);
         }

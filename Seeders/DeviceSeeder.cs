@@ -12,32 +12,36 @@ namespace ComputerServiceManager.Seeders
             if (context.Devices.Any())
                 return;
 
-            var saleDevices = context.SaleDevices.ToList();
-            if (saleDevices.Count == 0)
-                throw new Exception("Brak wpisów w tabeli Magazine (SaleDevice). Uruchom najpierw SaleDevicesSeeder.");
+            // Zakładam, że potrzebujesz przypisać OwnerClientId, więc pobierz klientów z bazy
+            var clients = context.Clients.ToList();
+            if (clients.Count == 0)
+                throw new Exception("Brak wpisów w tabeli Clients. Uruchom najpierw ClientSeeder.");
 
             var devices = new List<Device>
             {
                 new Device
                 {
-                    SaleDeviceId = saleDevices.First(m => m.Name.Contains("Dell XPS 15") || m.Name.Contains("MacBook") || m.Name.Contains("ThinkBook") || m.Name.Contains("ROG Zephyrus") || m.Name.Contains("Surface Pro") || m.Name.Contains("MacBook Air") || m.Name.Contains("ThinkBook Plus")).Id,
+                    OwnerClientId = clients.First().Id,
                     Name = "Dell XPS 15",
                     SerialNumber = "LAPTOP-001",
-                    Description = "Laptop Dell z wysoką wydajnością."
+                    Description = "Laptop Dell z wysoką wydajnością.",
+                    AddedAt = DateTimeOffset.UtcNow
                 },
                 new Device
                 {
-                    SaleDeviceId = saleDevices.First(m => m.Name.Contains("Samsung Galaxy S21") || m.Name.Contains("Samsung Galaxy Z Fold6") || m.Name.Contains("Samsung Galaxy Watch")).Id,
+                    OwnerClientId = clients.Skip(1).FirstOrDefault()?.Id ?? clients.First().Id,
                     Name = "Samsung Galaxy S21",
                     SerialNumber = "PHONE-001",
-                    Description = "Smartphone z flagowym aparatem."
+                    Description = "Smartphone z flagowym aparatem.",
+                    AddedAt = DateTimeOffset.UtcNow
                 },
                 new Device
                 {
-                    SaleDeviceId = saleDevices.First(m => m.Name.Contains("iPad Pro") || m.Name.Contains("Tablet") || m.Name.Contains("Surface Pro")).Id,
+                    OwnerClientId = clients.Skip(2).FirstOrDefault()?.Id ?? clients.First().Id,
                     Name = "Apple iPad Pro",
                     SerialNumber = "TABLET-001",
-                    Description = "Tablet idealny do pracy i rozrywki."
+                    Description = "Tablet idealny do pracy i rozrywki.",
+                    AddedAt = DateTimeOffset.UtcNow
                 }
             };
 

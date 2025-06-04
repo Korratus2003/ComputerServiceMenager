@@ -17,17 +17,25 @@ namespace ComputerServiceManager.Seeders
                 throw new Exception("Brak techników. Uruchom najpierw TechnicianSeeder.");
 
             var users = new List<User>();
-
+            
             foreach (var technician in technicians)
             {
                 users.Add(new User
                 {
                     TechnicianId = technician.Id,
                     Login = $"user{technician.Id}",
-                    PasswordHash = "1234",
+                    PasswordHash = "1234", // TODO: Użyj haszowania hasła w realnej aplikacji
                     Range = UserRange.Technician
                 });
             }
+            
+            users.Add(new User
+            {
+                TechnicianId = null,
+                Login = "admin",
+                PasswordHash = "admin1234", // TODO: Użyj haszowania hasła
+                Range = UserRange.Admin
+            });
 
             context.Users.AddRange(users);
             context.SaveChanges();

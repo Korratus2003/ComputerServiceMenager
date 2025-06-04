@@ -9,16 +9,17 @@ using System.IO;
 [Table("Technicians")]
 public class Technician
 {
+    [Key]
     public int Id { get; set; }
 
     [Required, MaxLength(255)]
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     [Required, MaxLength(255)]
-    public string Surname { get; set; }
+    public string Surname { get; set; } = null!;
 
     [MaxLength(20)]
-    public string PhoneNumber { get; set; }
+    public string? PhoneNumber { get; set; }
 
     public DateTimeOffset? EmploymentDate { get; set; }
 
@@ -27,9 +28,9 @@ public class Technician
     [MaxLength(2083)]
     public string? ImageUrl { get; set; }
 
-    public ICollection<Service> Services { get; set; }
+    public virtual ICollection<Service> Services { get; set; } = new List<Service>();
     
-    public ICollection<User>? User { get; set; }
+    public virtual ICollection<User>? Users { get; set; } = new List<User>();
     
     [NotMapped]
     public Bitmap? Image

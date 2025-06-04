@@ -1,23 +1,32 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-[Table("Devices")]
-public class Device
+namespace ComputerServiceManager.Database
 {
-    public int Id { get; set; }
+    [Table("Devices")]
+    public class Device
+    {
+        [Key]
+        public int Id { get; set; }
 
-    [Required, MaxLength(255)]
-    public string Name { get; set; } 
+        [Required, MaxLength(255)]
+        public string Name { get; set; } = null!;
 
-    [MaxLength(100)]
-    public string SerialNumber { get; set; }
+        [MaxLength(100)]
+        public string? SerialNumber { get; set; }
 
-    public string Description { get; set; }
-    public int SaleDeviceId { get; set; } 
-    
-    [ForeignKey("SaleDeviceId")]
-    public SaleDevice SaleDevice { get; set; }
+        public string? Description { get; set; }
 
-    public ICollection<Service> Services { get; set; }
+        public DateTimeOffset? AddedAt { get; set; }
+
+        [ForeignKey(nameof(OwnerClient))]
+        public int OwnerClientId { get; set; }
+
+        [Required]
+        public virtual Client OwnerClient { get; set; } = null!;
+
+        public virtual ICollection<Service> Services { get; set; } = new List<Service>();
+    }
 }

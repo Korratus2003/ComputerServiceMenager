@@ -3,26 +3,30 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-[Table("Clients")]
-public class Client
+namespace ComputerServiceManager.Database
 {
-    public int Id { get; set; }
+    [Table("Clients")]
+    public class Client
+    {
+        [Key]
+        public int Id { get; set; }
 
-    [Required, MaxLength(255)]
-    public string Name { get; set; }
+        [Required, MaxLength(255)]
+        public string Name { get; set; } = null!;
 
-    [Required, MaxLength(255)]
-    public string Surname { get; set; }
+        [Required, MaxLength(255)]
+        public string Surname { get; set; } = null!;
 
-    [MaxLength(20)]
-    public string PhoneNumber { get; set; }
+        [MaxLength(20)]
+        public string? PhoneNumber { get; set; }
 
-    [MaxLength(255)]
-    public string Email { get; set; }
+        [MaxLength(255)]
+        public string? Email { get; set; }
 
-    public bool VisitsRegularly { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-    
-    public ICollection<Service> Services { get; set; }
+        [Required]
+        public DateTimeOffset CreatedAt { get; set; }
+        
+        public virtual ICollection<Device> Devices { get; set; } = new List<Device>();
+        
+    }
 }
