@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Ports;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
@@ -16,7 +19,7 @@ namespace ComputerServiceManager.Utils
 
     public static class GenerateBillUtility
     {
-        public static void DrukujParagon(List<Produkt> produkty, string portPath = "/dev/ttyV5")
+        public static void Print(List<Produkt> produkty, string portPath = "/dev/ttyV5")
         {
             try
             {
@@ -76,5 +79,28 @@ namespace ComputerServiceManager.Utils
                 chk ^= (byte)c;
             return chk.ToString("X2");
         }
+    }
+    
+}
+
+public static class Ports
+{
+
+    public static string[] GetAvailablePorts()
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            return SerialPort.GetPortNames();
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
+                 RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            string[] prefixes = { "ttyUSB", "ttyACM", "ttyS", "ttyV" };
+            return Directory.GetFiles("/dev")
+                .Where(name => prefixes.Any(p => name.StartsWith("/dev/" + p)))
+                .ToArray();
+        }
+
+        return Array.Empty<string>();
     }
 }

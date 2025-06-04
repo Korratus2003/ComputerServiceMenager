@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ComputerServiceManager.Database;
+using ComputerServiceManager.Utils;
 using Npgsql;
 
 namespace ComputerServiceManager.ViewModels
@@ -25,9 +27,13 @@ namespace ComputerServiceManager.ViewModels
         [ObservableProperty] private string _dbName;
         [ObservableProperty] private string _errorMessage;
 
+        [ObservableProperty] private ObservableCollection<string> _availableComPorts = new();
+        [ObservableProperty] private string _selectedComPort;
+
         public SettingsPageViewModel()
         {
             LoadSettings();
+            RefreshComPorts();
         }
 
         private void LoadSettings()
@@ -57,8 +63,23 @@ namespace ComputerServiceManager.ViewModels
                     case "DB_NAME":
                         DbName = parts[1].Trim();
                         break;
+                    case "COM_PORT":
+                        SelectedComPort = parts[1].Trim();
+                        break;
                 }
             }
+        }
+
+        private void RefreshComPorts()
+        {
+            var ports = Ports.GetAvailablePorts();
+            AvailableComPorts = new ObservableCollection<string>(ports);
+
+            // Optionally restore previously selected port if still available
+            if (!string.IsNullOrWhiteSpace(SelectedComPort) && ports.Contains(SelectedComPort))
+                SelectedComPort = ports.First(p => p == SelectedComPort);
+            else if (ports.Length > 0)
+                SelectedComPort = ports[0];
         }
 
         [RelayCommand]
@@ -74,12 +95,12 @@ namespace ComputerServiceManager.ViewModels
                         $"DB_PORT={DbPort}",
                         $"DB_USERNAME={DbUsername}",
                         $"DB_PASSWORD={DbPassword}",
-                        $"DB_NAME={DbName}"
+                        $"DB_NAME={DbName}",
+                        $"COM_PORT={SelectedComPort}"
                     };
 
                     File.WriteAllLines(EnvFilePath, lines);
-                    ErrorMessage = "";
-
+                    ErrorMessage = "Settings saved!";
                 }
                 catch (Exception ex)
                 {
@@ -127,11 +148,12 @@ namespace ComputerServiceManager.ViewModels
         private async Task ExportDatabase()
         {
             await SaveSettings();
+
             var filePath = await FileDialog.OpenSaveDialog(new List<(string, List<string>)>
             {
                 ("Backup Files", new List<string> { "backup" })
             }, $"{DbName}.backup");
-            
+
             if (string.IsNullOrEmpty(filePath))
                 return;
 
@@ -160,8 +182,6 @@ namespace ComputerServiceManager.ViewModels
                 ErrorMessage = $"Export error: {ex.Message}";
             }
         }
-
-
 
         [RelayCommand]
         private async Task ImportDatabase()
@@ -199,10 +219,10 @@ namespace ComputerServiceManager.ViewModels
             }
 
             var filePath = await FileDialog.OpenFileDialog(new List<(string, List<string>)>
-                {
-                    ("Backup Files", new List<string> { "backup" })
-                }, $"{DbName}.backup");
-            
+            {
+                ("Backup Files", new List<string> { "backup" })
+            }, $"{DbName}.backup");
+
             if (string.IsNullOrEmpty(filePath))
                 return;
 

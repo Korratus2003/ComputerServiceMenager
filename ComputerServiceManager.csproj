@@ -38,6 +38,7 @@
         </PackageReference>
         <PackageReference Include="Npgsql" Version="9.0.3" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+        <PackageReference Include="System.IO.Ports" Version="10.0.0-preview.4.25258.110" />
     </ItemGroup>
 
     <ItemGroup>

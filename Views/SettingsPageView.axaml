@@ -25,7 +25,7 @@
         <Border CornerRadius="20" Background="#FC5130" BoxShadow="0 0 20 black" Padding="20">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                 <StackPanel HorizontalAlignment="Center">
-                    <TextBlock Text="Database Configuration" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center" />
+                    <TextBlock Text="Configuration" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center" />
 
                     <TextBlock Text="DB_HOST:" />
                     <TextBox Text="{Binding DbHost}" />
@@ -48,6 +48,16 @@
                         <Button Width="150" Command="{Binding ImportDatabaseCommand}" CornerRadius="15" FontWeight="Bold" Background="#FFFAFF" Cursor="Hand">
                             <TextBlock Text="Import DB" HorizontalAlignment="Center" Margin="10"/>
                         </Button>
+                    </StackPanel>
+                    <TextBlock Text="COM port for printer" />
+                    <StackPanel>
+                        <TextBlock Text="Select COM Port" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center" />
+
+                        <ComboBox ItemsSource="{Binding AvailableComPorts}" 
+                                  SelectedItem="{Binding SelectedComPort}"
+                                  Width="200"
+                                  HorizontalAlignment="Center" />
+
                     </StackPanel>
                     <TextBlock HorizontalAlignment="Center" Text="{Binding ErrorMessage}" Margin="10" FontWeight="Bold" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Margin="0">

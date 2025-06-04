@@ -6,13 +6,14 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using ComputerServiceManager.Database;
 using ComputerServiceManager.Utils;
+using DotNetEnv;
 
 namespace ComputerServiceManager.ViewModels
 {
     public partial class SalesPageViewModel : ViewModelBase
     {
         private readonly AppDbContext _context;
-
+        private string port; 
         public SalesPageViewModel()
         {
             _context = new AppDbContext();
@@ -23,6 +24,9 @@ namespace ComputerServiceManager.ViewModels
 
             IsServiceSelectionVisible = false;
             IsClientSelectionVisible = true;
+            
+            Env.Load();
+            port = Env.GetString("COM_PORT");
         }
         
         private ObservableCollection<Service> _allUnpaidServices = new();
@@ -215,7 +219,7 @@ namespace ComputerServiceManager.ViewModels
                 Cena = item.LineGross,
                 StawkaVAT = 'A'
             }).ToList();
-            GenerateBillUtility.DrukujParagon(produkty);
+            GenerateBillUtility.Print(produkty, port);
             
             foreach (var item in InvoiceItems)
             {
