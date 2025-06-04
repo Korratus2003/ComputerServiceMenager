@@ -19,6 +19,8 @@ namespace ComputerServiceManager.ViewModels
             LoadAvailableServiceTypes();
         }
 
+        private ObservableCollection<ServiceType> _allAvailableServiceTypes = new();
+
         [ObservableProperty]
         private ObservableCollection<ServiceType> availableServiceTypes = new();
 
@@ -28,8 +30,24 @@ namespace ComputerServiceManager.ViewModels
         [ObservableProperty]
         private ObservableCollection<InvoiceItem> invoiceItems = new();
 
-        public decimal TotalNet => InvoiceItems.Sum(i => i.LineNet);
-        public decimal TotalVat => InvoiceItems.Sum(i => i.LineVat);
+        [ObservableProperty]
+        private InvoiceItem selectedInvoiceItem;
+
+        private string _serviceSearchText = "";
+        public string ServiceSearchText
+        {
+            get => _serviceSearchText;
+            set
+            {
+                if (SetProperty(ref _serviceSearchText, value))
+                {
+                    FilterAvailableServices();
+                }
+            }
+        }
+
+        public decimal TotalNet => InvoiceItems.Sum(i => i.LineNet * i.Quantity);
+        public decimal TotalVat => InvoiceItems.Sum(i => i.LineVat * i.Quantity);
         public decimal TotalGross => InvoiceItems.Sum(i => i.LineGross * i.Quantity);
 
         private void LoadAvailableServiceTypes()
@@ -39,9 +57,24 @@ namespace ComputerServiceManager.ViewModels
                 .AsNoTracking()
                 .ToList();
 
-            AvailableServiceTypes.Clear();
-            foreach (var service in services)
-                AvailableServiceTypes.Add(service);
+            _allAvailableServiceTypes = new ObservableCollection<ServiceType>(services);
+            AvailableServiceTypes = new ObservableCollection<ServiceType>(_allAvailableServiceTypes);
+        }
+
+        private void FilterAvailableServices()
+        {
+            if (string.IsNullOrWhiteSpace(ServiceSearchText))
+            {
+                AvailableServiceTypes = new ObservableCollection<ServiceType>(_allAvailableServiceTypes);
+            }
+            else
+            {
+                var filtered = _allAvailableServiceTypes
+                    .Where(s => s.Name.Contains(ServiceSearchText, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                AvailableServiceTypes = new ObservableCollection<ServiceType>(filtered);
+            }
         }
 
         [RelayCommand]
@@ -69,9 +102,7 @@ namespace ComputerServiceManager.ViewModels
                 InvoiceItems.Add(newItem);
             }
 
-            OnPropertyChanged(nameof(TotalNet));
-            OnPropertyChanged(nameof(TotalVat));
-            OnPropertyChanged(nameof(TotalGross));
+            RaiseTotalsChanged();
         }
 
         [RelayCommand]
@@ -82,12 +113,44 @@ namespace ComputerServiceManager.ViewModels
                 Nazwa = item.Name,
                 Ilosc = item.Quantity,
                 Cena = item.LineGross,
-                StawkaVAT = 'A' // Możesz zmienić, jeśli masz różne stawki
+                StawkaVAT = 'A'
             }).ToList();
 
             GenerateBillUtility.DrukujParagon(produkty);
 
             InvoiceItems.Clear();
+            RaiseTotalsChanged();
+        }
+
+        [RelayCommand]
+        private void ClearSearch()
+        {
+            ServiceSearchText = string.Empty;
+        }
+
+        [RelayCommand]
+        private void RemoveInvoiceItem()
+        {
+            if (SelectedInvoiceItem != null && InvoiceItems.Contains(SelectedInvoiceItem))
+            {
+                if (SelectedInvoiceItem.Quantity > 1)
+                {
+                    SelectedInvoiceItem.Quantity--;
+                    SelectedInvoiceItem.OnQuantityChanged();
+                }
+                else
+                {
+                    InvoiceItems.Remove(SelectedInvoiceItem);
+                    SelectedInvoiceItem = null;
+                }
+
+                RaiseTotalsChanged();
+            }
+        }
+
+
+        private void RaiseTotalsChanged()
+        {
             OnPropertyChanged(nameof(TotalNet));
             OnPropertyChanged(nameof(TotalVat));
             OnPropertyChanged(nameof(TotalGross));

@@ -16,7 +16,7 @@
       <Setter Property="Foreground" Value="White"/>
     </Style>
     <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Background" Value="#EEE" />
       <Setter Property="CornerRadius" Value="10" />
       <Setter Property="Cursor" Value="Hand" />
     </Style>
@@ -27,14 +27,23 @@
     <Style Selector="Border.shadow:pointerover">
       <Setter Property="BoxShadow" Value="0 0 10 white" />
     </Style>
+    <Style Selector="TextBox.searchBox">
+      <Setter Property="FontSize" Value="14"/>
+      <Setter Property="Padding" Value="6"/>
+      <Setter Property="BorderBrush" Value="#DDD"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Background" Value="White"/>
+      <Setter Property="Foreground" Value="Black"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
   </UserControl.Styles>
 
-  <Grid RowDefinitions="Auto, *"
-        ColumnDefinitions="*,*">
-    <!-- LEWA CZĘŚĆ: Pozycje na rachunku -->
+  <Grid RowDefinitions="Auto, *" ColumnDefinitions="*,*">
     <Border Grid.Row="1" Grid.Column="0" Padding="10" Background="#333">
       <Grid RowDefinitions="Auto, *, Auto">
-        <TextBlock Text="Pozycje na rachunku"
+        <TextBlock Text="Invoice Items"
                    FontSize="16"
                    FontWeight="SemiBold"
                    Grid.Row="0"
@@ -43,6 +52,7 @@
 
         <ScrollViewer Grid.Row="1">
           <ListBox ItemsSource="{Binding InvoiceItems}"
+                   SelectedItem="{Binding SelectedInvoiceItem}"
                    Background="Transparent"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch">
@@ -55,18 +65,16 @@
                         Margin="0,0,0,6">
                   <Grid ColumnDefinitions="2*, 1*, 1.2*, 1.2*"
                         VerticalAlignment="Center">
-                    <!-- Nazwa serwisu -->
+
                     <TextBlock Text="{Binding Name}"
                                FontWeight="SemiBold"
                                Grid.Column="0"
                                VerticalAlignment="Center"
                                TextWrapping="Wrap"
                                TextTrimming="CharacterEllipsis"/>
-
-                    <!-- Ilość -->
-                    <StackPanel Grid.Column="1"
-                                HorizontalAlignment="Center">
-                      <TextBlock Text="Ilość:"
+                    
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                      <TextBlock Text="Quantity:"
                                  FontSize="12"
                                  Foreground="Gray"
                                  TextAlignment="Center"/>
@@ -75,12 +83,9 @@
                                  FontSize="14"
                                  TextAlignment="Center"/>
                     </StackPanel>
-
-                    <!-- Netto (linia) -->
-                    <StackPanel Grid.Column="2"
-                                HorizontalAlignment="Right"
-                                Margin="0,0,10,0">
-                      <TextBlock Text="Netto:"
+                    
+                    <StackPanel Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0">
+                      <TextBlock Text="Net:"
                                  FontSize="12"
                                  Foreground="Gray"
                                  TextAlignment="Right"/>
@@ -89,11 +94,9 @@
                                  FontSize="14"
                                  TextAlignment="Right"/>
                     </StackPanel>
-
-                    <!-- Brutto (linia) -->
-                    <StackPanel Grid.Column="3"
-                                HorizontalAlignment="Right">
-                      <TextBlock Text="Brutto:"
+                    
+                    <StackPanel Grid.Column="3" HorizontalAlignment="Right">
+                      <TextBlock Text="Gross:"
                                  FontSize="12"
                                  Foreground="Gray"
                                  TextAlignment="Right"/>
@@ -114,40 +117,48 @@
                     VerticalAlignment="Center"
                     Spacing="10"
                     Margin="0,6,0,0">
-          <Button Command="{Binding GenerateBillCommand}" Background="White">Generuj rachunek</Button>
-          <TextBlock Text="Razem netto:" Classes="bold white"/>
-          <TextBlock Text="{Binding TotalNet, StringFormat=0.00}"
-                     FontWeight="Bold"
-                     Classes="bold white"/>
+          <Button Command="{Binding GenerateBillCommand}" Background="White">Generate Bill</Button>
+          <Button Command="{Binding RemoveInvoiceItemCommand}" Background="White">Cancel</Button>
+          <TextBlock Text="Total Net:" Classes="bold white"/>
+          <TextBlock Text="{Binding TotalNet, StringFormat=0.00}" FontWeight="Bold" Classes="bold white"/>
           <TextBlock Text="VAT 23%:" Classes="bold white"/>
-          <TextBlock Text="{Binding TotalVat, StringFormat=0.00}"
-                     FontWeight="Bold"
-                     Classes="bold white"/>
-          <TextBlock Text="Razem brutto:" Classes="bold white"/>
-          <TextBlock Text="{Binding TotalGross, StringFormat=0.00}"
-                     FontWeight="Bold"
-                     Classes="bold white"/>
+          <TextBlock Text="{Binding TotalVat, StringFormat=0.00}" FontWeight="Bold" Classes="bold white"/>
+          <TextBlock Text="Total Gross:" Classes="bold white"/>
+          <TextBlock Text="{Binding TotalGross, StringFormat=0.00}" FontWeight="Bold" Classes="bold white"/>
         </StackPanel>
       </Grid>
     </Border>
 
-    <!-- PRAWA CZĘŚĆ: Lista serwisów i przycisk dodawania -->
-    <Border Grid.Row="1"
-            Grid.Column="1"
-            Background="#FC5130"
-            CornerRadius="5 0 0 5"
-            Padding="10">
+    <Border Grid.Row="1" Grid.Column="1" Background="#FC5130" CornerRadius="5 0 0 5" Padding="10">
       <Grid RowDefinitions="Auto, *, Auto">
-        
-        <!-- Nagłówek -->
-        <TextBlock Grid.Row="0"
-                   Text="Dostępne serwisy"
-                   FontSize="16"
-                   FontWeight="SemiBold"
-                   Margin="0,0,0,10"
-                   Classes="bold white"/>
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+          <TextBlock Text="Available Services"
+                     FontSize="16"
+                     FontWeight="SemiBold"
+                     Classes="bold white"
+                     Margin="0,0,0,6"/>
 
-        <!-- Lista serwisów -->
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0"
+                     Watermark="Search service..."
+                     Text="{Binding ServiceSearchText, UpdateSourceTrigger=PropertyChanged}"
+                     Height="32"
+                     Classes="searchBox"/>
+
+            <Button Grid.Column="1"
+                    Content="Clear"
+                    Height="32"
+                    Margin="6,0,0,0"
+                    Background="#FFF"
+                    Command="{Binding ClearSearchCommand}"/>
+          </Grid>
+        </StackPanel>
+
         <ScrollViewer Grid.Row="1">
           <ListBox ItemsSource="{Binding AvailableServiceTypes}"
                    SelectedItem="{Binding SelectedServiceType}"
@@ -175,7 +186,7 @@
                                 VerticalAlignment="Center"
                                 Spacing="6"
                                 Height="80">
-                      <TextBlock VerticalAlignment="Center" Text="Cena netto: "/>
+                      <TextBlock VerticalAlignment="Center" Text="Net Price:"/>
                       <TextBlock VerticalAlignment="Center"
                                  Text="{Binding DefaultPrice, StringFormat=0.00}"
                                  Classes="bold"
@@ -189,19 +200,18 @@
           </ListBox>
         </ScrollViewer>
 
-        <!-- Przycisk dodania serwisu do rachunku -->
         <Button Grid.Row="2"
                 Command="{Binding AddInvoiceItemCommand}"
                 Background="#EEEEEE"
                 Height="50"
-                Margin="0,10,0,0">
+                Margin="0,10,0,0"
+                HorizontalAlignment="Center">
           <TextBlock VerticalAlignment="Center"
                      TextAlignment="Center"
                      FontWeight="Bold">
-            Dodaj serwis do rachunku
+            Add Service to Invoice
           </TextBlock>
         </Button>
-
       </Grid>
     </Border>
   </Grid>
