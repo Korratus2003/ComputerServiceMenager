@@ -17,6 +17,10 @@ namespace ComputerServiceManager.ViewModels
         {
             _context = new AppDbContext();
             LoadAvailableServiceTypes();
+            LoadClients();
+            
+            IsServiceSelectionVisible = false;
+            IsClientSelectionVisible = true;
         }
 
         private ObservableCollection<ServiceType> _allAvailableServiceTypes = new();
@@ -33,6 +37,23 @@ namespace ComputerServiceManager.ViewModels
         [ObservableProperty]
         private InvoiceItem selectedInvoiceItem;
 
+        [ObservableProperty]
+        private ObservableCollection<Client> clients = new();
+
+        [ObservableProperty]
+        private Client selectedClient;
+        
+        [ObservableProperty]
+        private bool isServiceSelectionVisible;
+
+        [ObservableProperty]
+        private bool isClientSelectionVisible;
+
+        partial void OnSelectedClientChanged(Client oldValue, Client newValue)
+        {
+            OnPropertyChanged(nameof(CanGenerateBill));
+        }
+
         private string _serviceSearchText = "";
         public string ServiceSearchText
         {
@@ -46,9 +67,31 @@ namespace ComputerServiceManager.ViewModels
             }
         }
 
+        private string _clientSearchText = "";
+        public string ClientSearchText
+        {
+            get => _clientSearchText;
+            set
+            {
+                if (SetProperty(ref _clientSearchText, value))
+                {
+                    FilterClients();
+                }
+            }
+        }
+
+        private ObservableCollection<Client> _filteredClients = new();
+        public ObservableCollection<Client> FilteredClients
+        {
+            get => _filteredClients;
+            set => SetProperty(ref _filteredClients, value);
+        }
+
         public decimal TotalNet => InvoiceItems.Sum(i => i.LineNet * i.Quantity);
         public decimal TotalVat => InvoiceItems.Sum(i => i.LineVat * i.Quantity);
         public decimal TotalGross => InvoiceItems.Sum(i => i.LineGross * i.Quantity);
+
+        public bool CanGenerateBill => SelectedClient != null && InvoiceItems.Count > 0;
 
         private void LoadAvailableServiceTypes()
         {
@@ -59,6 +102,17 @@ namespace ComputerServiceManager.ViewModels
 
             _allAvailableServiceTypes = new ObservableCollection<ServiceType>(services);
             AvailableServiceTypes = new ObservableCollection<ServiceType>(_allAvailableServiceTypes);
+        }
+
+        private void LoadClients()
+        {
+            var clientsFromDb = _context.Clients
+                .OrderBy(c => c.Name)
+                .AsNoTracking()
+                .ToList();
+
+            Clients = new ObservableCollection<Client>(clientsFromDb);
+            FilteredClients = new ObservableCollection<Client>(clientsFromDb);
         }
 
         private void FilterAvailableServices()
@@ -76,6 +130,30 @@ namespace ComputerServiceManager.ViewModels
                 AvailableServiceTypes = new ObservableCollection<ServiceType>(filtered);
             }
         }
+
+        private void FilterClients()
+        {
+            if (string.IsNullOrWhiteSpace(ClientSearchText))
+            {
+                FilteredClients = new ObservableCollection<Client>(Clients);
+            }
+            else
+            {
+                var searchText = ClientSearchText.Trim();
+
+                var filtered = Clients
+                    .Where(c =>
+                        (!string.IsNullOrEmpty(c.Name) && c.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                        (!string.IsNullOrEmpty(c.Surname) && c.Surname.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                        (!string.IsNullOrEmpty(c.PhoneNumber) && c.PhoneNumber.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                        (!string.IsNullOrEmpty(c.Email) && c.Email.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                    )
+                    .ToList();
+
+                FilteredClients = new ObservableCollection<Client>(filtered);
+            }
+        }
+
 
         [RelayCommand]
         private void AddInvoiceItem()
@@ -104,8 +182,8 @@ namespace ComputerServiceManager.ViewModels
 
             RaiseTotalsChanged();
         }
-
-        [RelayCommand]
+        
+        [RelayCommand]  
         private void GenerateBill()
         {
             var produkty = InvoiceItems.Select(item => new Produkt
@@ -129,6 +207,12 @@ namespace ComputerServiceManager.ViewModels
         }
 
         [RelayCommand]
+        private void ClearClientSearch()
+        {
+            ClientSearchText = string.Empty;
+        }
+
+        [RelayCommand]
         private void RemoveInvoiceItem()
         {
             if (SelectedInvoiceItem != null && InvoiceItems.Contains(SelectedInvoiceItem))
@@ -148,12 +232,32 @@ namespace ComputerServiceManager.ViewModels
             }
         }
 
-
         private void RaiseTotalsChanged()
         {
             OnPropertyChanged(nameof(TotalNet));
             OnPropertyChanged(nameof(TotalVat));
             OnPropertyChanged(nameof(TotalGross));
+            OnPropertyChanged(nameof(CanGenerateBill));
+        }
+        
+        [RelayCommand]
+        private void ShowClientSelection()
+        {
+            IsServiceSelectionVisible = false;
+            IsClientSelectionVisible = true;
+        }
+
+        [RelayCommand]
+        private void ShowServiceSelection()
+        {
+            IsServiceSelectionVisible = true;
+            IsClientSelectionVisible = false;
+        }
+
+        [RelayCommand]
+        private void ConfirmClient()
+        {
+            ShowServiceSelection();
         }
     }
 
