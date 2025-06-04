@@ -30,7 +30,7 @@ namespace ComputerServiceManager.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamptz");
 
                     b.Property<string>("Email")
@@ -105,6 +105,11 @@ namespace ComputerServiceManager.Migrations
 
                     b.Property<int>("DeviceId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsPaid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10,2)");

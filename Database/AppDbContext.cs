@@ -196,6 +196,10 @@ namespace ComputerServiceManager.Database
                       .WithMany(st => st.Services)
                       .HasForeignKey(s => s.ServiceTypeId)
                       .OnDelete(DeleteBehavior.Cascade);
+                
+                entity.Property(e => e.IsPaid)
+                      .IsRequired()
+                      .HasDefaultValue(false);
             });
 
             base.OnModelCreating(modelBuilder);

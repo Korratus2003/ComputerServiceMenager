@@ -16,20 +16,22 @@ namespace ComputerServiceManager.ViewModels
         public SalesPageViewModel()
         {
             _context = new AppDbContext();
-            LoadAvailableServiceTypes();
             LoadClients();
             
+            _allUnpaidServices = new ObservableCollection<Service>();
+            UnpaidServices = new ObservableCollection<Service>();
+
             IsServiceSelectionVisible = false;
             IsClientSelectionVisible = true;
         }
-
-        private ObservableCollection<ServiceType> _allAvailableServiceTypes = new();
-
-        [ObservableProperty]
-        private ObservableCollection<ServiceType> availableServiceTypes = new();
+        
+        private ObservableCollection<Service> _allUnpaidServices = new();
 
         [ObservableProperty]
-        private ServiceType selectedServiceType;
+        private ObservableCollection<Service> unpaidServices = new();
+
+        [ObservableProperty]
+        private Service selectedService;
 
         [ObservableProperty]
         private ObservableCollection<InvoiceItem> invoiceItems = new();
@@ -42,7 +44,7 @@ namespace ComputerServiceManager.ViewModels
 
         [ObservableProperty]
         private Client selectedClient;
-        
+
         [ObservableProperty]
         private bool isServiceSelectionVisible;
 
@@ -51,6 +53,7 @@ namespace ComputerServiceManager.ViewModels
 
         partial void OnSelectedClientChanged(Client oldValue, Client newValue)
         {
+            LoadUnpaidServicesForClient(newValue);
             OnPropertyChanged(nameof(CanGenerateBill));
         }
 
@@ -62,7 +65,7 @@ namespace ComputerServiceManager.ViewModels
             {
                 if (SetProperty(ref _serviceSearchText, value))
                 {
-                    FilterAvailableServices();
+                    FilterUnpaidServices();
                 }
             }
         }
@@ -93,17 +96,6 @@ namespace ComputerServiceManager.ViewModels
 
         public bool CanGenerateBill => SelectedClient != null && InvoiceItems.Count > 0;
 
-        private void LoadAvailableServiceTypes()
-        {
-            var services = _context.ServiceTypes
-                .OrderBy(s => s.Name)
-                .AsNoTracking()
-                .ToList();
-
-            _allAvailableServiceTypes = new ObservableCollection<ServiceType>(services);
-            AvailableServiceTypes = new ObservableCollection<ServiceType>(_allAvailableServiceTypes);
-        }
-
         private void LoadClients()
         {
             var clientsFromDb = _context.Clients
@@ -114,20 +106,43 @@ namespace ComputerServiceManager.ViewModels
             Clients = new ObservableCollection<Client>(clientsFromDb);
             FilteredClients = new ObservableCollection<Client>(clientsFromDb);
         }
+        
+        private void LoadUnpaidServicesForClient(Client client)
+        {
+            if (client == null)
+            {
+                _allUnpaidServices.Clear();
+                UnpaidServices = new ObservableCollection<Service>();
+                return;
+            }
+            
+            var unpaidList = _context.Services
+                .Include(s => s.ServiceType)
+                .Include(s => s.Device)
+                .Where(s =>
+                    s.Device.OwnerClientId == client.Id &&
+                    s.IsPaid == false)
+                .OrderBy(s => s.Date)
+                .AsNoTracking()
+                .ToList();
 
-        private void FilterAvailableServices()
+            _allUnpaidServices = new ObservableCollection<Service>(unpaidList);
+            UnpaidServices = new ObservableCollection<Service>(_allUnpaidServices);
+        }
+        
+        private void FilterUnpaidServices()
         {
             if (string.IsNullOrWhiteSpace(ServiceSearchText))
             {
-                AvailableServiceTypes = new ObservableCollection<ServiceType>(_allAvailableServiceTypes);
+                UnpaidServices = new ObservableCollection<Service>(_allUnpaidServices);
             }
             else
             {
-                var filtered = _allAvailableServiceTypes
-                    .Where(s => s.Name.Contains(ServiceSearchText, StringComparison.OrdinalIgnoreCase))
+                var filtered = _allUnpaidServices
+                    .Where(s => s.ServiceType.Name.Contains(ServiceSearchText, StringComparison.OrdinalIgnoreCase))
                     .ToList();
 
-                AvailableServiceTypes = new ObservableCollection<ServiceType>(filtered);
+                UnpaidServices = new ObservableCollection<Service>(filtered);
             }
         }
 
@@ -154,14 +169,17 @@ namespace ComputerServiceManager.ViewModels
             }
         }
 
-
         [RelayCommand]
         private void AddInvoiceItem()
         {
-            if (SelectedServiceType == null)
+            if (SelectedService == null)
                 return;
+            
+            var price = SelectedService.Price != 0
+                ? SelectedService.Price
+                : SelectedService.ServiceType.DefaultPrice;
 
-            var existing = InvoiceItems.FirstOrDefault(x => x.ServiceTypeId == SelectedServiceType.Id);
+            var existing = InvoiceItems.FirstOrDefault(x => x.ServiceTypeId == SelectedService.ServiceTypeId);
             if (existing != null)
             {
                 existing.Quantity++;
@@ -171,21 +189,25 @@ namespace ComputerServiceManager.ViewModels
             {
                 var newItem = new InvoiceItem
                 {
-                    ServiceTypeId = SelectedServiceType.Id,
-                    Name = SelectedServiceType.Name,
+                    ServiceTypeId = SelectedService.ServiceTypeId,
+                    Name = SelectedService.ServiceType.Name,
                     Type = "Usługa",
-                    NetPrice = SelectedServiceType.DefaultPrice,
+                    NetPrice = price,
                     Quantity = 1
                 };
                 InvoiceItems.Add(newItem);
             }
 
             RaiseTotalsChanged();
+            RemoveUnpaidService();
         }
-        
-        [RelayCommand]  
+
+        [RelayCommand]
         private void GenerateBill()
         {
+            if (SelectedClient == null || InvoiceItems.Count == 0)
+                return;
+
             var produkty = InvoiceItems.Select(item => new Produkt
             {
                 Nazwa = item.Name,
@@ -193,11 +215,30 @@ namespace ComputerServiceManager.ViewModels
                 Cena = item.LineGross,
                 StawkaVAT = 'A'
             }).ToList();
-
             GenerateBillUtility.DrukujParagon(produkty);
+            
+            foreach (var item in InvoiceItems)
+            {
+                var servicesToMark = _context.Services
+                    .Where(s =>
+                        s.Device.OwnerClientId == SelectedClient.Id &&
+                        s.ServiceTypeId == item.ServiceTypeId &&
+                        s.IsPaid == false)
+                    .ToList();
+
+                foreach (var serv in servicesToMark)
+                {
+                    serv.IsPaid = true;
+                    _context.Services.Update(serv);
+                }
+            }
+        
+            _context.SaveChanges();
 
             InvoiceItems.Clear();
             RaiseTotalsChanged();
+
+            LoadUnpaidServicesForClient(SelectedClient);
         }
 
         [RelayCommand]
@@ -221,9 +262,31 @@ namespace ComputerServiceManager.ViewModels
                 {
                     SelectedInvoiceItem.Quantity--;
                     SelectedInvoiceItem.OnQuantityChanged();
+                    
                 }
                 else
                 {
+                    var serviceTypeId = SelectedInvoiceItem.ServiceTypeId;
+                    
+                    var servicesToReturn = _context.Services
+                        .Include(s => s.ServiceType)
+                        .Include(s => s.Device)
+                        .Where(s => s.Device.OwnerClientId == SelectedClient.Id &&
+                                    s.ServiceTypeId == serviceTypeId &&
+                                    s.IsPaid == false)
+                        .AsNoTracking()
+                        .ToList();
+                    
+                    foreach (var serv in servicesToReturn)
+                    {
+                        if (!_allUnpaidServices.Any(s => s.Id == serv.Id))
+                        {
+                            _allUnpaidServices.Add(serv);
+                        }
+                    }
+                    
+                    FilterUnpaidServices();
+                    
                     InvoiceItems.Remove(SelectedInvoiceItem);
                     SelectedInvoiceItem = null;
                 }
@@ -232,6 +295,20 @@ namespace ComputerServiceManager.ViewModels
             }
         }
 
+        [RelayCommand]
+        private void RemoveUnpaidService()
+        {
+            if (SelectedService != null && UnpaidServices.Contains(SelectedService))
+            {
+                UnpaidServices.Remove(SelectedService);
+                _allUnpaidServices.Remove(SelectedService);
+                SelectedService = null;
+                
+                OnPropertyChanged(nameof(UnpaidServices));
+            }
+        }
+
+
         private void RaiseTotalsChanged()
         {
             OnPropertyChanged(nameof(TotalNet));
@@ -239,12 +316,15 @@ namespace ComputerServiceManager.ViewModels
             OnPropertyChanged(nameof(TotalGross));
             OnPropertyChanged(nameof(CanGenerateBill));
         }
-        
+
         [RelayCommand]
         private void ShowClientSelection()
         {
+            
             IsServiceSelectionVisible = false;
             IsClientSelectionVisible = true;
+            InvoiceItems.Clear();
+            RaiseTotalsChanged();
         }
 
         [RelayCommand]

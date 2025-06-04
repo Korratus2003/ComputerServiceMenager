@@ -19,43 +19,63 @@ namespace ComputerServiceManager.Seeders
 
             if (!clients.Any() || !devices.Any() || !technicians.Any() || !serviceTypes.Any())
                 throw new Exception("Brak klienta, urządzenia, technika lub typu usługi. Upewnij się, że poprzednie seedery działają poprawnie.");
-
-            var repairServiceType = serviceTypes.FirstOrDefault(st => st.Name.Contains("Naprawa")) ?? serviceTypes.First();
-            var saleServiceType = serviceTypes.FirstOrDefault(st => st.Name.Contains("Sprzedaż")) ?? serviceTypes.First();
+            
+            var firstClient = clients.First();
+            
+            var clientDevices = devices
+                .Where(d => d.OwnerClientId == firstClient.Id)
+                .ToList();
+            
+            if (!clientDevices.Any())
+            {
+                clientDevices = new List<Device> { devices.First() };
+            }
+            
+            var repairServiceType = serviceTypes.FirstOrDefault(st => st.Name.Contains("Naprawa")) 
+                                     ?? serviceTypes.First();
+            var installServiceType = serviceTypes.FirstOrDefault(st => st.Name.Contains("Instalacja")) 
+                                     ?? serviceTypes.FirstOrDefault(st => st.Id != repairServiceType.Id) 
+                                     ?? serviceTypes.First();
 
             var services = new List<Service>
             {
                 new Service
                 {
-                    DeviceId = devices.First().Id,
+                    DeviceId = clientDevices[0].Id,
                     TechnicianId = technicians.First().Id,
                     ServiceTypeId = repairServiceType.Id,
-                    Description = "Naprawa laptopa Dell XPS 15",
+                    Description = "Naprawa laptopa Dell XPS 15 dla pierwszego klienta",
                     Price = repairServiceType.DefaultPrice,
-                    Status = ServiceStatus.Pending,
-                    Date = DateTimeOffset.UtcNow.AddDays(-1)
-                },
-                new Service
-                {
-                    DeviceId = devices.ElementAtOrDefault(1)?.Id ?? devices.First().Id,
-                    TechnicianId = technicians.ElementAtOrDefault(1)?.Id ?? technicians.First().Id,
-                    ServiceTypeId = saleServiceType.Id,
-                    Description = "Sprzedaż smartfona Samsung Galaxy S21",
-                    Price = saleServiceType.DefaultPrice,
                     Status = ServiceStatus.Completed,
-                    Date = DateTimeOffset.UtcNow.AddDays(-2)
+                    IsPaid = false,
+                    Date = DateTimeOffset.UtcNow.AddDays(-3)
                 },
                 new Service
                 {
-                    DeviceId = devices.ElementAtOrDefault(2)?.Id ?? devices.First().Id,
+                    DeviceId = clientDevices[0].Id,
                     TechnicianId = technicians.First().Id,
-                    ServiceTypeId = repairServiceType.Id,
-                    Description = "Aktualizacja oprogramowania tabletu Apple iPad Pro",
-                    Price = repairServiceType.DefaultPrice,
-                    Status = ServiceStatus.InProgress,
-                    Date = DateTimeOffset.UtcNow
+                    ServiceTypeId = installServiceType.Id,
+                    Description = "Instalacja systemu Windows 10 na laptopie",
+                    Price = installServiceType.DefaultPrice,
+                    Status = ServiceStatus.Completed,
+                    IsPaid = false,
+                    Date = DateTimeOffset.UtcNow.AddDays(-2)
                 }
             };
+            if (clientDevices.Count > 1)
+            {
+                services.Add(new Service
+                {
+                    DeviceId = clientDevices[1].Id,
+                    TechnicianId = technicians.First().Id,
+                    ServiceTypeId = repairServiceType.Id,
+                    Description = "Aktualizacja oprogramowania na drugim urządzeniu pierwszego klienta",
+                    Price = repairServiceType.DefaultPrice,
+                    Status = ServiceStatus.InProgress,
+                    IsPaid = false,
+                    Date = DateTimeOffset.UtcNow.AddDays(-1)
+                });
+            }
 
             context.Services.AddRange(services);
             context.SaveChanges();

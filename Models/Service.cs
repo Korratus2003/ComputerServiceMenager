@@ -38,4 +38,7 @@ public class Service
     public ServiceStatus Status { get; set; }
 
     public DateTimeOffset Date { get; set; }
+    
+    [Required]
+    public bool IsPaid { get; set; }
 }
