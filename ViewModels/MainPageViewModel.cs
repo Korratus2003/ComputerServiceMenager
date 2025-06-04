@@ -20,13 +20,10 @@ public partial class MainPageViewModel : ViewModelBase
 
     public ObservableCollection<ListItemTemplate> Items { get; } = new()
     {
-        new ListItemTemplate(typeof(TechniciansPageViewModel), "people_settings_regular"),
         new ListItemTemplate(typeof(DevicesPageViewModel), "phone_tablet_regular"),
         new ListItemTemplate(typeof(ClientsPageViewModel), "people_community_regular"),
         new ListItemTemplate(typeof(ServicePageViewModel), "wrench_regular"),
         new ListItemTemplate(typeof(SalesPageViewModel), "money_regular"),
-        new ListItemTemplate(typeof(MagazinePageViewModel), "vehicle_truck_regular"),
-        new ListItemTemplate(typeof(SettingsPageViewModel), "settings_regular")
     };
 
     [ObservableProperty]
@@ -60,6 +57,12 @@ public partial class MainPageViewModel : ViewModelBase
         ViewMediator.Instance.ViewChanged += OnViewChanged;
         ActiveViewModel = ViewMediator.Instance.ActiveViewModel;
         SelectedListItem = Items[0];
+
+        if (mainWindowViewModel.LogedUser.Range == UserRange.Admin)
+        {
+            Items.Add(new ListItemTemplate(typeof(TechniciansPageViewModel), "people_settings_regular"));
+            Items.Add(new ListItemTemplate(typeof(SettingsPageViewModel), "settings_regular"));
+        }
         
     }
 

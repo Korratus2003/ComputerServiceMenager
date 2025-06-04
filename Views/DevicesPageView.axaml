@@ -6,6 +6,63 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ComputerServiceManager.Views.DevicesPageView"
              x:DataType="vm:DevicesPageViewModel">
-    
 
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="TextBlock.High">
+            <Setter Property="FontSize" Value="20"/>
+        </Style>
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FC5130" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style Selector="Border.shadow:pointerover">
+            <Setter Property="BoxShadow" Value="0 0 10 white" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid Margin="20"
+          RowDefinitions="Auto,*">
+        <StackPanel Orientation="Horizontal" Spacing="10" Grid.Row="0" HorizontalAlignment="Center" Margin="10">
+            <TextBox Width="400"
+                     Watermark="Search by device name, serial, or owner..."
+                     VerticalAlignment="Center"
+                     Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Clear" Command="{Binding ClearFiltersCommand}" Background="#EEEEEE" Padding="10"/>
+            <Button Content="Add Device" Background="#EEEEEE" Padding="10" Command="{Binding AddDeviceCommand}"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1">
+            <ListBox ItemsSource="{Binding Devices}" Background="Transparent" SelectedItem="{Binding SelectedDevice}">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Classes="shadow" Width="250" Height="300" CornerRadius="10" Background="#EEEEEE" Cursor="Hand" Margin="5">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="5" Margin="10">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
+                                    <TextBlock Classes="High" Text="{Binding Name}" TextWrapping="Wrap" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding SerialNumber}" FontStyle="Italic" FontSize="12" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding Description}" FontSize="12" TextWrapping="Wrap" HorizontalAlignment="Center" MaxHeight="60"/>
+                                <TextBlock Text="{Binding AddedAt, StringFormat='Added at: {0:yyyy-MM-dd}'}" FontSize="12" Foreground="Gray" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding OwnerClient.Name}" FontSize="12" Foreground="DarkSlateBlue" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding OwnerClient.Surname}" FontSize="12" Foreground="DarkSlateBlue" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
+    </Grid>
 </UserControl>
