@@ -18,23 +18,23 @@ namespace ComputerServiceManager.Seeders
             var serviceTypes = context.ServiceTypes.ToList();
 
             if (!clients.Any() || !devices.Any() || !technicians.Any() || !serviceTypes.Any())
-                throw new Exception("Brak klienta, urządzenia, technika lub typu usługi. Upewnij się, że poprzednie seedery działają poprawnie.");
-            
+                throw new Exception("Missing client, device, technician or service type. Please ensure previous seeders have run correctly.");
+
             var firstClient = clients.First();
-            
+
             var clientDevices = devices
                 .Where(d => d.OwnerClientId == firstClient.Id)
                 .ToList();
-            
+
             if (!clientDevices.Any())
             {
                 clientDevices = new List<Device> { devices.First() };
             }
-            
-            var repairServiceType = serviceTypes.FirstOrDefault(st => st.Name.Contains("Naprawa")) 
+
+            var repairServiceType = serviceTypes.FirstOrDefault(st => st.Name.Contains("Repair"))
                                      ?? serviceTypes.First();
-            var installServiceType = serviceTypes.FirstOrDefault(st => st.Name.Contains("Instalacja")) 
-                                     ?? serviceTypes.FirstOrDefault(st => st.Id != repairServiceType.Id) 
+            var installServiceType = serviceTypes.FirstOrDefault(st => st.Name.Contains("Install"))
+                                     ?? serviceTypes.FirstOrDefault(st => st.Id != repairServiceType.Id)
                                      ?? serviceTypes.First();
 
             var services = new List<Service>
@@ -44,7 +44,7 @@ namespace ComputerServiceManager.Seeders
                     DeviceId = clientDevices[0].Id,
                     TechnicianId = technicians.First().Id,
                     ServiceTypeId = repairServiceType.Id,
-                    Description = "Naprawa laptopa Dell XPS 15 dla pierwszego klienta",
+                    Description = "Repair of Dell XPS 15 laptop for the first client",
                     Price = repairServiceType.DefaultPrice,
                     Status = ServiceStatus.Completed,
                     IsPaid = false,
@@ -55,13 +55,14 @@ namespace ComputerServiceManager.Seeders
                     DeviceId = clientDevices[0].Id,
                     TechnicianId = technicians.First().Id,
                     ServiceTypeId = installServiceType.Id,
-                    Description = "Instalacja systemu Windows 10 na laptopie",
+                    Description = "Windows 10 installation on laptop",
                     Price = installServiceType.DefaultPrice,
                     Status = ServiceStatus.Completed,
                     IsPaid = false,
                     Date = DateTimeOffset.UtcNow.AddDays(-2)
                 }
             };
+
             if (clientDevices.Count > 1)
             {
                 services.Add(new Service
@@ -69,7 +70,7 @@ namespace ComputerServiceManager.Seeders
                     DeviceId = clientDevices[1].Id,
                     TechnicianId = technicians.First().Id,
                     ServiceTypeId = repairServiceType.Id,
-                    Description = "Aktualizacja oprogramowania na drugim urządzeniu pierwszego klienta",
+                    Description = "Software update on the second device of the first client",
                     Price = repairServiceType.DefaultPrice,
                     Status = ServiceStatus.InProgress,
                     IsPaid = false,

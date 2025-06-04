@@ -30,7 +30,6 @@
 
 <Grid Margin="20"
       RowDefinitions="Auto, *">
-    <!-- Fixed Header: Search, Filters and Add button -->
     <StackPanel Orientation="Horizontal" Spacing="10" Grid.Row="0" HorizontalAlignment="Center" Margin="10">
         <CheckBox Content="Show Active" Foreground="#EEEEEE"
                   IsChecked="{Binding ShowActive, Mode=TwoWay}"/>
@@ -45,8 +44,7 @@
         <Button Content="Add Technician" Background="#EEEEEE" Padding="10"
                 Command="{Binding AddTechnicianCommand}"/>
     </StackPanel>
-
-    <!-- Scrollable Technicians list -->
+    
     <ScrollViewer Grid.Row="1">
         <ListBox ItemsSource="{Binding Technicians}"
                  Background="Transparent"
