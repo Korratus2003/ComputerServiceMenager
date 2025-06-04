@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Bogus;
 using ComputerServiceManager.Database;
 
 namespace ComputerServiceManager.Seeders
@@ -11,34 +12,15 @@ namespace ComputerServiceManager.Seeders
         {
             if (context.Clients.Any())
                 return;
-                
-            var clients = new List<Client>
-            {
-                new Client
-                {
-                    Name = "Jan",
-                    Surname = "Kowalski",
-                    PhoneNumber = "123456789",
-                    Email = "jan.kowalski@przyklad.pl",
-                    CreatedAt = DateTime.UtcNow
-                },
-                new Client
-                {
-                    Name = "Anna",
-                    Surname = "Nowak",
-                    PhoneNumber = "987654321",
-                    Email = "anna.nowak@przyklad.pl",
-                    CreatedAt = DateTime.UtcNow.AddDays(-30)
-                },
-                new Client
-                {
-                    Name = "Marek",
-                    Surname = "Lewandowski",
-                    PhoneNumber = "111222333",
-                    Email = "marek.lewandowski@przyklad.pl",
-                    CreatedAt = DateTime.UtcNow.AddDays(-60)
-                }
-            };
+            
+            var clientFaker = new Faker<Client>()
+                .RuleFor(c => c.Name, f => f.Name.FirstName())
+                .RuleFor(c => c.Surname, f => f.Name.LastName())
+                .RuleFor(c => c.PhoneNumber, f => f.Phone.PhoneNumber("### ### ###"))
+                .RuleFor(c => c.Email, f => f.Internet.Email())
+                .RuleFor(c => c.CreatedAt, f => f.Date.Past(2).ToUniversalTime());
+
+            var clients = clientFaker.Generate(20); 
 
             context.Clients.AddRange(clients);
             context.SaveChanges();

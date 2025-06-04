@@ -24,7 +24,7 @@ namespace ComputerServiceManager.Seeders
                 {
                     TechnicianId = technician.Id,
                     Login = $"user{technician.Id}",
-                    PasswordHash = "1234", // TODO: Użyj haszowania hasła w realnej aplikacji
+                    PasswordHash = "1234",
                     Range = UserRange.Technician
                 });
             }
@@ -33,7 +33,7 @@ namespace ComputerServiceManager.Seeders
             {
                 TechnicianId = null,
                 Login = "admin",
-                PasswordHash = "admin1234", // TODO: Użyj haszowania hasła
+                PasswordHash = "admin1234",
                 Range = UserRange.Admin
             });
 
