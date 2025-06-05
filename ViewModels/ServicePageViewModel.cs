@@ -40,25 +40,13 @@ namespace ComputerServiceManager.ViewModels
                 .Include(s => s.Device)
                 .Include(s => s.Technician)
                 .Include(s => s.ServiceType)
-                .AsNoTracking() // Opcjonalnie, jeśli nie planujesz edycji
+                .AsNoTracking()
                 .ToList();
         }
 
         private void ApplyFilters()
         {
-            var filtered = _allServices.AsEnumerable();
-
-            if (!string.IsNullOrWhiteSpace(SearchText))
-            {
-                var lower = SearchText.Trim().ToLowerInvariant();
-                filtered = filtered.Where(s =>
-                    (s.Device?.Name?.ToLowerInvariant().Contains(lower) ?? false) ||
-                    (s.Technician?.Name?.ToLowerInvariant().Contains(lower) ?? false) ||
-                    (s.ServiceType?.Name?.ToLowerInvariant().Contains(lower) ?? false) ||
-                    (s.Description?.ToLowerInvariant().Contains(lower) ?? false)
-                );
-            }
-
+            var filtered = FilterServices(SearchText);
             Services.Clear();
             foreach (var service in filtered)
             {
@@ -66,10 +54,31 @@ namespace ComputerServiceManager.ViewModels
             }
         }
 
+        private IEnumerable<Service> FilterServices(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return _allServices;
+
+            var lower = text.Trim().ToLowerInvariant();
+
+            return _allServices.Where(s =>
+                (s.Device?.Name?.ToLowerInvariant().Contains(lower) ?? false) ||
+                (s.Technician?.Name?.ToLowerInvariant().Contains(lower) ?? false) ||
+                (s.ServiceType?.Name?.ToLowerInvariant().Contains(lower) ?? false) ||
+                (s.Description?.ToLowerInvariant().Contains(lower) ?? false)
+            );
+        }
+
         [RelayCommand]
         private void ClearFilters()
         {
             SearchText = string.Empty;
+        }
+
+        [RelayCommand]
+        private void EditService()
+        {
+            System.Diagnostics.Debug.WriteLine($"Edytuj");
         }
     }
 }

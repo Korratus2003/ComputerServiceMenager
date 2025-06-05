@@ -33,7 +33,7 @@
             <TextBlock FontWeight="Bold" FontSize="30" TextAlignment="Center" HorizontalAlignment="Center" Margin="5" Foreground="WhiteSmoke">
                 You have created an administrator account. 
                 <LineBreak/> If you are also a technician, add yourself in the Technicians tab,
-                <LineBreak/> then assign it to yourself in the settings. 
+                <LineBreak/> then assign it to yourself in the users settings. 
                 <LineBreak/> As an administrator, you can add technicians, 
                 <LineBreak/> change their employment status, and add or remove accounts.
             </TextBlock>

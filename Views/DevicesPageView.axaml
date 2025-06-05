@@ -6,63 +6,204 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ComputerServiceManager.Views.DevicesPageView"
              x:DataType="vm:DevicesPageViewModel">
+  
+  <UserControl.Resources>
+    <SolidColorBrush x:Key="AccentBrush" Color="#FC5130" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#E04E2A" />
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="CardHoverBrush" Color="#FFF5F5F5" />
+    <SolidColorBrush x:Key="BorderBrushColor" Color="#FFE0E0E0" />
+    <SolidColorBrush x:Key="PageBackgroundBrush" Color="#FFF8F9FA" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FF2B2D42" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#FF555A6E" />
+    
+    <CornerRadius x:Key="ControlCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="CardCornerRadius">10</CornerRadius>
+    <Thickness x:Key="ControlPadding">8,4</Thickness>
+    <Thickness x:Key="CardPadding">10</Thickness>
+    <Thickness x:Key="CardMargin">8</Thickness>
+    <Thickness x:Key="ControlMargin">4</Thickness>
+    
+    <DropShadowEffect x:Key="CardShadow" Color="#40000000" BlurRadius="8" Opacity="0.15" />
+  </UserControl.Resources>
+  
+  <UserControl.Styles>
+    
+    <Style Selector="TextBlock">
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="TextBlock.High">
+      <Setter Property="FontSize" Value="20"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+    </Style>
+    <Style Selector="TextBlock.Meta">
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+    </Style>
+    <Style Selector="TextBlock.Regular">
+      <Setter Property="FontSize" Value="14"/>
+      <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+    </Style>
+    
+    <Style Selector="Button">
+      <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Padding" Value="{StaticResource ControlPadding}" />
+      <Setter Property="Margin" Value="{StaticResource ControlMargin}" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}"
+                  CornerRadius="{TemplateBinding CornerRadius}">
+            <ContentPresenter HorizontalAlignment="Center"
+                              VerticalAlignment="Center" />
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="Button:hover">
+      <Setter Property="Background" Value="{StaticResource AccentHoverBrush}" />
+    </Style>
+    <Style Selector="Button:disabled">
+      <Setter Property="Opacity" Value="0.5" />
+      <Setter Property="Cursor" Value="Arrow" />
+    </Style>
+    
+    <Style Selector="TextBox">
+      <Setter Property="Background" Value="White" />
+      <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+      <Setter Property="Margin" Value="{StaticResource ControlMargin}" />
+      <Setter Property="Padding" Value="{StaticResource ControlPadding}" />
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="BorderBrush" Value="{StaticResource BorderBrushColor}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+      <Setter Property="Template">
+      </Setter>
+    </Style>
+    <Style Selector="TextBox:hover">
+      <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+    </Style>
+    
+    <Style Selector="ListBoxItem">
+      <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource BorderBrushColor}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="{StaticResource CardCornerRadius}" />
+      <Setter Property="Padding" Value="{StaticResource CardPadding}" />
+      <Setter Property="Margin" Value="{StaticResource CardMargin}" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="ListBoxItem:hover">
+      <Setter Property="Background" Value="{StaticResource CardHoverBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+      <Setter Property="RenderTransform">
+        <Setter.Value>
+          <ScaleTransform ScaleX="1.02" ScaleY="1.02" />
+        </Setter.Value>
+      </Setter>
+      <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+    </Style>
+    <Style Selector="ListBoxItem:selected">
+      <Setter Property="Background" Value="{StaticResource CardHoverBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+    </Style>
+    <Style Selector="Border.shadow">
+      <Setter Property="CornerRadius" Value="{StaticResource CardCornerRadius}" />
+    </Style>
+  </UserControl.Styles>
+  
+  <Grid Margin="20"
+        RowDefinitions="Auto,*">
+    
+    <StackPanel Orientation="Horizontal"
+                Spacing="10"
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                Margin="10">
+      <TextBox Width="400"
+               Watermark="Search by device name, serial, or owner..."
+               Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-    <UserControl.Styles>
-        <Style Selector="TextBlock">
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="TextBlock.High">
-            <Setter Property="FontSize" Value="20"/>
-        </Style>
-        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="CornerRadius" Value="10" />
-            <Setter Property="Cursor" Value="Hand" />
-        </Style>
-        <Style Selector="Button:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#FC5130" />
-            <Setter Property="Cursor" Value="Hand" />
-        </Style>
-        <Style Selector="Border.shadow:pointerover">
-            <Setter Property="BoxShadow" Value="0 0 10 white" />
-        </Style>
-    </UserControl.Styles>
+      <Button Content="Clear"
+              Command="{Binding ClearFiltersCommand}"
+              Background="{StaticResource CardBackgroundBrush}"
+              Foreground="{StaticResource TextPrimaryBrush}" />
 
-    <Grid Margin="20"
-          RowDefinitions="Auto,*">
-        <StackPanel Orientation="Horizontal" Spacing="10" Grid.Row="0" HorizontalAlignment="Center" Margin="10">
-            <TextBox Width="400"
-                     Watermark="Search by device name, serial, or owner..."
-                     VerticalAlignment="Center"
-                     Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="Clear" Command="{Binding ClearFiltersCommand}" Background="#EEEEEE" Padding="10"/>
-            <Button Content="Add Device" Background="#EEEEEE" Padding="10" Command="{Binding AddDeviceCommand}"/>
-        </StackPanel>
+      <Button Content="Add Device"
+              Command="{Binding AddDeviceCommand}"
+              Background="{StaticResource CardBackgroundBrush}"
+              Foreground="{StaticResource TextPrimaryBrush}" />
+    </StackPanel>
+    
+    <ScrollViewer Grid.Row="1"
+                  VerticalScrollBarVisibility="Auto">
+      <ListBox ItemsSource="{Binding Devices}"
+               SelectedItem="{Binding SelectedDevice}"
+               Background="Transparent"
+               BorderThickness="0"
+               Margin="0,8">
+        
+        <ListBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal"
+                       HorizontalAlignment="Center"
+                       Margin="8" />
+          </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Classes="shadow"
+                    Width="250"
+                    Height="320"
+                    Background="{StaticResource CardBackgroundBrush}"
+                    CornerRadius="{StaticResource CardCornerRadius}"
+                    Margin="{StaticResource CardMargin}">
+              <StackPanel Spacing="6"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Stretch"
+                          Margin="10">
+                <TextBlock Classes="High"
+                           Text="{Binding Name}"
+                           TextWrapping="Wrap"
+                           Margin="0,4,0,4"/>
+                <Rectangle Height="1"
+                           Fill="{StaticResource BorderBrushColor}"
+                           Margin="0,0,0,8"/>
+                
+                <TextBlock Classes="Regular"
+                           Text="{Binding Description}"
+                           TextWrapping="Wrap"
+                           MaxHeight="60"
+                           Margin="0,0,0,8"/>
+                
+                <TextBlock Classes="Meta"
+                           Text="{Binding SerialNumber, StringFormat='Serial: {0}'}"
+                           Margin="0,0,0,4"/>
+                
+                <TextBlock Classes="Meta"
+                           Text="{Binding AddedAt, StringFormat='Added: {0:yyyy-MM-dd}'}"
+                           Margin="0,0,0,8"/>
+                
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Spacing="4"
+                            Margin="0,4,0,0">
+                  <TextBlock Classes="Meta" Text="Owner:" FontWeight="SemiBold" />
+                  <TextBlock Classes="Meta" Text="{Binding OwnerClient.Name}" />
+                  <TextBlock Classes="Meta" Text="{Binding OwnerClient.Surname}" />
+                </StackPanel>
 
-        <ScrollViewer Grid.Row="1">
-            <ListBox ItemsSource="{Binding Devices}" Background="Transparent" SelectedItem="{Binding SelectedDevice}">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center" />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Border Classes="shadow" Width="250" Height="300" CornerRadius="10" Background="#EEEEEE" Cursor="Hand" Margin="5">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="5" Margin="10">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
-                                    <TextBlock Classes="High" Text="{Binding Name}" TextWrapping="Wrap" />
-                                </StackPanel>
-                                <TextBlock Text="{Binding SerialNumber}" FontStyle="Italic" FontSize="12" HorizontalAlignment="Center"/>
-                                <TextBlock Text="{Binding Description}" FontSize="12" TextWrapping="Wrap" HorizontalAlignment="Center" MaxHeight="60"/>
-                                <TextBlock Text="{Binding AddedAt, StringFormat='Added at: {0:yyyy-MM-dd}'}" FontSize="12" Foreground="Gray" HorizontalAlignment="Center"/>
-                                <TextBlock Text="{Binding OwnerClient.Name}" FontSize="12" Foreground="DarkSlateBlue" HorizontalAlignment="Center"/>
-                                <TextBlock Text="{Binding OwnerClient.Surname}" FontSize="12" Foreground="DarkSlateBlue" HorizontalAlignment="Center"/>
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </ScrollViewer>
-    </Grid>
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+
+      </ListBox>
+    </ScrollViewer>
+  </Grid>
 </UserControl>

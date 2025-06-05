@@ -3,70 +3,80 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ComputerServiceManager.ViewModels"
-             mc:Ignorable="d"
-             d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ComputerServiceManager.Views.ServicePageView"
              x:DataType="vm:ServicePageViewModel">
 
+  <!-- Style -->
   <UserControl.Styles>
+    <Style Selector="TextBlock">
+      <Setter Property="Foreground" Value="#111"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
     <Style Selector="TextBlock.header">
       <Setter Property="FontSize" Value="18"/>
       <Setter Property="FontWeight" Value="Bold"/>
-      <Setter Property="Margin" Value="0 0 0 6"/>
-      <Setter Property="Foreground" Value="#222222"/>
     </Style>
 
     <Style Selector="TextBlock.detail">
       <Setter Property="FontSize" Value="14"/>
-      <Setter Property="Foreground" Value="#555555"/>
-      <Setter Property="Margin" Value="2 0"/>
     </Style>
-    <Style Selector="Border.shadow:pointerover">
-      <Setter Property="BoxShadow" Value="0 0 10 #888" />
-    </Style>
+
     <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="Transparent" />
-      <Setter Property="CornerRadius" Value="10" />
-      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="CornerRadius" Value="10"/>
+    </Style>
+    
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="CornerRadius" Value="10"/>
+    </Style>
+
+    <Style Selector="Button:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#FC5130"/>
+      <Setter Property="Cursor" Value="Hand"/>
     </Style>
   </UserControl.Styles>
 
   <Grid Margin="20" RowDefinitions="Auto,*">
-    
+    <!-- Search panel -->
     <StackPanel Orientation="Horizontal" Spacing="10" Grid.Row="0" HorizontalAlignment="Center" Margin="10">
       <TextBox Width="400"
                Watermark="Search by device, technician, service type or description..."
                VerticalAlignment="Center"
                Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-      <Button Content="Clear" Command="{Binding ClearFiltersCommand}" Background="#EEEEEE" Padding="10,6" />
+
+      <Button Content="Clear"
+              Background="#EEEEEE"
+              Padding="10"
+              Command="{Binding ClearFiltersCommand}" />
     </StackPanel>
-    
+
+    <!-- Services list -->
     <ScrollViewer Grid.Row="1">
-      <ListBox ItemsSource="{Binding Services}"
-               Background="Transparent">
-        <ListBox.ItemsPanel>
-
-        </ListBox.ItemsPanel>
-
+      <ListBox ItemsSource="{Binding Services}" Background="Transparent" BorderThickness="0">
         <ListBox.ItemTemplate>
           <DataTemplate>
-            <Border Classes="shadow" Margin="10"
-                    CornerRadius="10" Background="#EEEEEE" Cursor="Hand">
-              <StackPanel Margin="12" Spacing="4">
-                <TextBlock Classes="header" Text="{Binding Device.Name}" HorizontalAlignment="Center"/>
-                <TextBlock Classes="detail" Text="{Binding Technician.Name}" />
-                <TextBlock Classes="detail" Text="{Binding ServiceType.Name}" />
-                <TextBlock Classes="detail" Text="{Binding Description}" TextWrapping="Wrap" MaxHeight="50"/>
-                <TextBlock Classes="detail" Text="{Binding Price, StringFormat='Price: {0:C}'}" />
-                <TextBlock Classes="detail" Text="{Binding Date, StringFormat='Date: {0:yyyy-MM-dd}'}" />
-                <TextBlock Text="{Binding Status}">
-                </TextBlock>
-              </StackPanel>
+            <Border Classes="shadow" Margin="10" Padding="10"
+                    CornerRadius="10" Background="#EEEEEE">
+              <Grid ColumnDefinitions="3*,2*,2*,4*,2*,2*,Auto" VerticalAlignment="Center" Margin="16">
+                <TextBlock Classes="detail" Text="{Binding Device.Name}" Grid.Column="0" />
+                <TextBlock Classes="detail" Text="{Binding Technician.Name}" Grid.Column="1" />
+                <TextBlock Classes="detail" Text="{Binding ServiceType.Name}" Grid.Column="2" />
+                <TextBlock Classes="detail" Text="{Binding Price, StringFormat='{}{0:C}'}" Grid.Column="4" />
+                <TextBlock Classes="detail" Text="{Binding Date, StringFormat='{}{0:yyyy-MM-dd}'}" Grid.Column="5" />
+
+                <!-- Edit button -->
+                <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                  <Button Content="Edit"
+                          Background="#FC5130" Margin="6"/>
+                </StackPanel>
+              </Grid>
             </Border>
           </DataTemplate>
         </ListBox.ItemTemplate>
       </ListBox>
     </ScrollViewer>
-
   </Grid>
 </UserControl>
