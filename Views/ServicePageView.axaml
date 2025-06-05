@@ -58,7 +58,7 @@
       <ListBox ItemsSource="{Binding Services}" Background="Transparent" BorderThickness="0">
         <ListBox.ItemTemplate>
           <DataTemplate>
-            <Border Classes="shadow" Margin="10" Padding="10"
+            <Border  Margin="10" Padding="10"
                     CornerRadius="10" Background="#EEEEEE">
               <Grid ColumnDefinitions="3*,2*,2*,4*,2*,2*,Auto" VerticalAlignment="Center" Margin="16">
                 <TextBlock Classes="detail" Text="{Binding Device.Name}" Grid.Column="0" />

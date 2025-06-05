@@ -78,7 +78,7 @@ namespace ComputerServiceManager.ViewModels
         [RelayCommand]
         private void EditService()
         {
-            System.Diagnostics.Debug.WriteLine($"Edytuj");
+            System.Diagnostics.Debug.WriteLine("Edytuj");
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ComputerServiceManager.Database;
+using BCrypt.Net;
 
 namespace ComputerServiceManager.Seeders
 {
@@ -11,29 +12,31 @@ namespace ComputerServiceManager.Seeders
         {
             if (context.Users.Any())
                 return;
-                
+
             var technicians = context.Technicians.ToList();
             if (!technicians.Any())
                 throw new Exception("Brak techników. Uruchom najpierw TechnicianSeeder.");
 
             var users = new List<User>();
-            
+
             foreach (var technician in technicians)
             {
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword("1234");
                 users.Add(new User
                 {
                     TechnicianId = technician.Id,
                     Login = $"user{technician.Id}",
-                    PasswordHash = "1234",
+                    PasswordHash = hashedPassword,
                     Range = UserRange.Technician
                 });
             }
-            
+
+            var adminHashed = BCrypt.Net.BCrypt.HashPassword("1234");
             users.Add(new User
             {
                 TechnicianId = null,
                 Login = "admin",
-                PasswordHash = "admin1234",
+                PasswordHash = adminHashed,
                 Range = UserRange.Admin
             });
 
