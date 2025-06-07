@@ -66,6 +66,16 @@ dotnet run
 
 - Projekt używa biblioteki `DotNetEnv` do ładowania zmiennych środowiskowych.
 - Upewnij się, że serwer PostgreSQL działa i baza danych jest dostępna pod podanym adresem.
-
+- W aplikacji do komunikacja z drukarką fiskalną jest zgodna z protokołem thermal firmy POSNET dostępnym [tutaj](https://www.soft-bit.pl/downloads/all/Posnet/pliki/THS-I-DEV-02-006_specyfikacja_protokolu_Thermal_w_Thermal_HS_FV.pdf) 
+- Ze wzglęðu na brak drukarki, do testowania był używany emulator DFEmul według poradnika z [tej strony](https://what-it.pl/2023/05/25/emulacja-drukarki-fiskalnej/)
 ---
+
+## Główne cele aplikacji
+
+- Łatwe zarżadzanie urządzeniami, klientami, technikami
+- Generwoanie rachunków za serwisy (Możliwa rozbudowa o sprzedaż urządzeń)
+
+# Działanie
+Gdy baza danych jest pusta, trzeba założyć główne konto administratora które ma dostęp do techników i zmian ustawień aplikacji
+
 
