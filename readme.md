@@ -90,6 +90,10 @@ dotnet run
   ```
 ---
 
+## Baza Danych
+![image](https://github.com/user-attachments/assets/5224d5c2-870b-4b8e-a07a-0278f722cc39)
+
+
 ## Główne cele aplikacji
 
 - Łatwe zarządzanie urządzeniami, klientami, technikami
